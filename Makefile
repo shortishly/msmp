@@ -22,6 +22,7 @@ COVER = 1
 
 COVER_REPORT_DIR = _site/cover
 CT_LOGS_DIR = _site/ct
+EDOC_OPTS = {preprocess, true}, {dir, "_site/edoc"}
 
 DEPS += narcs
 DEPS += phrase
