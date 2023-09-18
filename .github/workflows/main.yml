@@ -1,0 +1,70 @@
+---
+name: ci
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+jobs:
+  build:
+    strategy:
+      matrix:
+        otp:
+          - 26
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp}}
+      - run: make all dialyze eunit
+  site:
+    needs: build
+    strategy:
+      matrix:
+        otp:
+          - 26
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp}}
+      - run: make tests edoc
+      - uses: shortishly/coverdata@main
+        with:
+          input: _site/cover
+          output: _site/cover/coverage.json
+          otp-version: ${{matrix.otp}}
+      - uses: actions/upload-pages-artifact@v1
+        with:
+          path: _site
+  hex-publish:
+    if: github.ref_name != 'main' && github.ref_name != 'develop'
+    needs: build
+    strategy:
+      matrix:
+        otp:
+          - 26
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp}}
+      - run: make hex-release-publish
+        env:
+          HEX_SECRET: ${{ secrets.HEX_SECRET }}
+  deploy:
+    needs: site
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v2
