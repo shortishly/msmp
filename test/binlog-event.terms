@@ -1,0 +1,259 @@
+%% -*- mode: erlang -*-
+%% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+
+{#{packet => #{header => #{flags => 32,
+                           timestamp => 0,
+                           server_id => 100,
+                           event_type => rotate,
+                           event_size => 44,
+                           log_pos => 0},
+               action => log_event,
+               event => #{position => 4,
+                          new_log_ident => <<"binlog.000001">>},
+               footer => <<"x\t¢R">>},
+               sequence => 1},
+<<45,0,0,1,0,0,0,0,0,4,100,0,0,0,44,0,0,0,0,0,0,0,32,0,4,0,0,0,0,0,0,0,
+  98,105,110,108,111,103,46,48,48,48,48,48,49,120,9,162,82>>}.
+
+{#{packet => #{header => #{flags => 0,
+                           timestamp => 1690534733,
+                           server_id => 100,
+                           event_type => format_description,
+                           event_size => 122,
+                           log_pos => 126},
+               action => log_event,
+               event => #{binlog_version => 4,
+                          mysql_server_version => <<"8.0.34">>,
+                          create_timestamp => 1690534733,
+                          header_length => 19,
+                          stuff => <<0,13,0,8,0,0,0,0,4,0,4,0,0,0,98,0,4,26,8,0,0,
+                                     0,8,8,8,2,0,0,0,10,10,10,42,42,0,18,52,0,10,
+                                     40,0,1>>},
+               footer => <<"îÝfù">>},
+   sequence => 2},
+ <<123,0,0,
+   2,
+   0,
+   77,131,195,100,
+   15,
+   100,0,0,0,
+   122,0,0,0,
+   126,0,0,0,
+   0,0,
+   4,0,            % binlog version
+   56,46,48,46,51,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+   77,131,195,100, % create timestamp
+   19,             % event header length
+   0,13,0,8,
+   0,0,0,
+   0,4,0,4,0,0,0,98,0,4,26,8,0,0,0,8,8,8,2,0,0,0,10,10,10,42,42,0,18,52,
+   0,10,40,0,1,238,221,102,249>>}.
+
+{#{packet => #{header => #{flags => 0,
+                           timestamp => 1690534744,
+                           server_id => 100,
+                           event_type => table_map,
+                           event_size => 61,
+                           log_pos => 3040923},
+               action => log_event,
+               event => #{flags => 1,
+                          table => <<"t1">>,
+                          metadata => #{unsignedness => #{1 => false},
+                                        default_charset => [255]},
+                          field_metadata => #{1 => undefined,
+                                              2 => 200,
+                                              3 => undefined,
+                                              4 => 0,
+                                              5 => 0},
+                          coltypes => [long,varchar,date,time2,datetime2],
+                          null_bitmap => <<30>>,
+                          table_id => 113,
+                          database => <<"test">>},
+               footer => <<"xççå">>},
+   sequence => 55},
+ <<62,0,0,
+   55,
+   0,
+   88,131,195,100,
+   19,
+   100,0,0,0,
+   61,0,0,0,
+   155,102,46,0,
+   0,0,
+   113,0,0,0,0,0,
+   1,0,
+   4,116,101,115,116,  % "test"
+   0,
+   2,116,49,           % "t1"
+   0,
+   5,                  % number of columns
+   3,15,10,19,18,      % column types
+   4,                  % length of field metadata
+   200,0,0,0,          % field metadata
+   30,                 % bitmap
+   1,1,0,2,3,252,255,0,120,231,231,229>>}.
+
+%% {#{packet => #{header => #{flags => 0,
+%%                            timestamp => 1690534744,
+%%                            server_id => 100,
+%%                            event_type => write_rows,
+%%                            event_size => 57,
+%%                            log_pos => 3040980},
+%%                action => log_event,
+%%                event => #{flags => 1,
+%%                           other => <<0,1,0,0,0,5,116,101,115,116,49,252,206,15,128,
+%%                                      142,207,153,176,184,142,196>>,
+%%                           bitmap => <<"ÿ">>,
+%%                           table_id => 113,
+%%                           extra_row_info => <<>>},
+%%                footer => <<35,47,1,45>>},
+%%    sequence => 56},
+%%  <<58,0,0,         % little endian packet length
+%%    56,             % sequence
+%%    0,              % ok packet
+%%    88,131,195,100, % timestamp
+%%    30,             % write rows log event
+%%    100,0,0,0,      % server id
+%%    57,0,0,0,       % event size
+%%    212,102,46,0,   % log position
+%%    0,0,            % flags
+%%    113,0,0,0,0,0,  % table id
+%%    1,0,            % flags
+%%    2,0,            % extra row info size inclusive (2 - 2)
+%%    5,              % the width of the columns bitmap (m_width)
+%%    255,            % columns bitmap
+%%    0,
+%%    1,0,0,0,                % integer 1
+%%    5,116,101,115,116,49,   % 5 chars - "test1"
+%%    252,206,15,             % date {2023, 7 28}
+%%    128,142,207,            % time2
+%%    153,176,184,142,196,    % datetime2
+%%    35, 47,  1, 45>>}.
+
+{#{packet => #{header => #{flags => 0,
+                           timestamp => 1691335990,
+                           server_id => 100,
+                           event_type => table_map,
+                           event_size => 93,
+                           log_pos => 2703689},
+               action => log_event,
+               event => #{flags => 1,
+                          table => <<"time_zone_name">>,
+                          metadata => #{unsignedness => #{2 => true},
+                                        default_charset => [33],
+                                        column_name => [<<"Name">>, <<"Time_zone_id">>],
+                                        simple_primary_key => [0],
+                                        column_visibility => <<"À">>},
+                          field_metadata => #{1 => #{length => 192,field_type => string},
+                                              2 => undefined},
+                          coltypes => [string,long],
+                          table_id => 105,
+                          database => <<"mysql">>,
+                          null_bitmap => <<0>>},
+               footer => <<195,41,136,55>>},
+   sequence => 74},
+ <<94,0,0,74,0,54,189,207,100,19,100,0,0,0,93,0,0,0,73,65,41,
+   0,0,0,105,0,0,0,0,0,1,0,5,109,121,115,113,108,0,14,116,
+   105,109,101,95,122,111,110,101,95,110,97,109,101,0,2,254,
+   3,2,254,192,0,1,1,128,2,1,33,4,18,4,78,97,109,101,12,84,
+   105,109,101,95,122,111,110,101,95,105,100,8,1,0,12,1,192,
+   195,41,136,55>>}.
+
+{#{packet => #{header => #{flags => 0,
+                           timestamp => 1692269987,
+                           server_id => 100,
+                           event_type => query,
+                           event_size => 104,
+                           log_pos => 338},
+               action => log_event,
+               event => #{slave_proxy_id => 8,
+                          execution_time => 0,
+                          schema_length => 5,
+                          error_code => 0,
+                          status_vars => #{flags2 => <<0,0,0,0>>,
+                                           sql_mode => <<32,0,160,69,0,0,0,0>>,
+                                           catalog_nz => <<"std">>,
+                                           charset => #{character_set_client => 8,
+                                                        collation_connection => 8,
+                                                        collation_server => 255},
+                                           ddl_xid => 3,
+                                           default_collation_for_utf8mb4 => 255},
+                          schema => <<"mysql">>,
+                          sql => <<"TRUNCATE TABLE time_zone">>},
+               footer => <<7,52,89,122>>},
+   sequence => 5},
+ <<105,0,0,5,0,163,253,221,100,2,100,0,0,0,104,0,0,0,82,1,0,0,0,0,8,0,0,
+   0,0,0,0,0,5,0,0,38,0,0,0,0,0,0,1,32,0,160,69,0,0,0,0,6,3,115,116,100,
+   4,8,0,8,0,255,0,17,3,0,0,0,0,0,0,0,18,255,0,109,121,115,113,108,0,84,
+   82,85,78,67,65,84,69,32,84,65,66,76,69,32,116,105,109,101,95,122,111,
+   110,101,7,52,89,122>>}.
+
+{#{packet => #{header => #{flags => 0,
+                           timestamp => 1692269987,
+                           server_id => 100,
+                           event_type => query,
+                           event_size => 109,
+                           log_pos => 524},
+               action => log_event,
+               event => #{slave_proxy_id => 8,
+                          execution_time => 0,
+                          schema_length => 5,
+                          error_code => 0,
+                          status_vars => #{flags2 => <<0,0,0,0>>,
+                                           sql_mode => <<32,0,160,69,0,0,0,0>>,
+                                           catalog_nz => <<"std">>,
+                                           charset => #{character_set_client => 8,
+                                                        collation_connection => 8,
+                                                        collation_server => 255},
+                                           ddl_xid => 4,
+                                           default_collation_for_utf8mb4 => 255},
+                          schema => <<"mysql">>,
+                          sql => <<"TRUNCATE TABLE time_zone_name">>},
+               footer => <<30,206,75,181>>},
+   sequence => 7},
+ <<110,0,0,7,0,163,253,221,100,2,100,0,0,0,109,0,0,0,12,2,0,0,0,0,8,0,0,
+   0,0,0,0,0,5,0,0,38,0,0,0,0,0,0,1,32,0,160,69,0,0,0,0,6,3,115,116,100,
+   4,8,0,8,0,255,0,17,4,0,0,0,0,0,0,0,18,255,0,109,121,115,113,108,0,84,
+   82,85,78,67,65,84,69,32,84,65,66,76,69,32,116,105,109,101,95,122,111,
+   110,101,95,110,97,109,101,30,206,75,181>>}.
+
+{{<<>>,
+  #{packet => #{header => #{flags => 8,
+                           timestamp => 1692270001,
+                           server_id => 100,
+                           event_type => query,
+                           event_size => 81,
+                           log_pos => 3501263},
+               action => log_event,
+               event => #{slave_proxy_id => 28,
+                          execution_time => 0,
+                          schema_length => 10,
+                          error_code => 0,
+                          status_vars => #{flags2 => <<0,0,0,0>>,
+                                           sql_mode => <<32,0,160,69,0,0,0,0>>,
+                                           catalog_nz => <<"std">>,
+                                           charset => #{character_set_client => 8,
+                                                        collation_connection => 8,
+                                                        collation_server => 255},
+                                           default_collation_for_utf8mb4 => 255},
+                          schema => <<"shortishly">>,
+                          sql => <<"BEGIN">>},
+               footer => <<"CLóÞ">>},
+   sequence => 72}},
+<<82,0,0,72,0,177,253,221,100,2,100,0,0,0,81,0,0,0,207,108,53,0,8,0,28,
+  0,0,0,0,0,0,0,10,0,0,29,0,0,0,0,0,0,1,32,0,160,69,0,0,0,0,6,3,115,116,
+  100,4,8,0,8,0,255,0,18,255,0,115,104,111,114,116,105,115,104,108,121,
+  0,66,69,71,73,78,67,76,243,222>>}.

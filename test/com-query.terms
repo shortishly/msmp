@@ -1,0 +1,150 @@
+%% -*- mode: erlang -*-
+%% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+
+{#{packet => #{query => <<"select @@version_comment limit 1">>,
+               action => com_query,
+               parameter_count => 0,
+               parameter_set => 1},
+   sequence => 0},
+ <<35,0,0,0,
+   3,
+   0,
+   1,
+   115,101,108,101,99,116,32,64,64,118,
+   101,114,115,105,111,110,95,99,111,109,109,101,110,
+   116,32,108,105,109,105,116,32,49>>}.
+
+{#{packet => #{query => <<"SELECT UNIX_TIMESTAMP()">>,
+               action => com_query,
+               parameter_count => 0,
+               parameter_set => 1},
+   sequence => 0},
+ <<26,0,0,0,
+   3,
+   0,
+   1,
+   83,69,76,69,67,84,32,85,78,73,88,95,
+   84,73,77,69,83,84,65,77,80,40,41>>}.
+
+{#{packet => #{query => <<"SELECT @@GLOBAL.SERVER_ID">>,
+               action => com_query,
+               parameter_count => 0,
+               parameter_set => 1},
+   sequence => 0},
+ <<28,0,0,0,
+   3,
+   0,
+   1,
+   83,69,76,69,67,84,32,64,64,71,76,79,
+   66,65,76,46,83,69,82,86,69,82,95,73,68>>}.
+
+{#{packet => #{query =>
+                   <<"SET @master_heartbeat_period = 30000001024, "
+                     "@source_heartbeat_period = 30000001024">>,
+               action => com_query,
+               parameter_count => 0,
+               parameter_set => 1},
+   sequence => 0},
+ <<85,0,0,0,3,0,1,83,69,84,32,64,109,97,115,116,101,114,
+   95,104,101,97,114,116,98,101,97,116,95,112,101,114,
+   105,111,100,32,61,32,51,48,48,48,48,48,48,49,48,50,
+   52,44,32,64,115,111,117,114,99,101,95,104,101,97,114,
+   116,98,101,97,116,95,112,101,114,105,111,100,32,61,
+   32,51,48,48,48,48,48,48,49,48,50,52>>}.
+
+{#{packet => #{query =>
+                   <<"SET @master_binlog_checksum = @@global.binlog_checksum, "
+                     "@source_binlog_checksum = @@global.binlog_checksum">>,
+               action => com_query,
+               parameter_count => 0,
+               parameter_set => 1},
+   sequence => 0},
+ <<109,0,0,0,3,0,1,83,69,84,32,64,109,97,115,116,101,
+   114,95,98,105,110,108,111,103,95,99,104,101,99,107,
+   115,117,109,32,61,32,64,64,103,108,111,98,97,108,46,
+   98,105,110,108,111,103,95,99,104,101,99,107,115,117,
+   109,44,32,64,115,111,117,114,99,101,95,98,105,110,
+   108,111,103,95,99,104,101,99,107,115,117,109,32,61,
+   32,64,64,103,108,111,98,97,108,46,98,105,110,108,111,
+   103,95,99,104,101,99,107,115,117,109>>}.
+
+{#{packet =>
+       #{query => <<"SELECT @source_binlog_checksum">>,
+         action => com_query,
+         parameter_count => 0,
+         parameter_set => 1},
+   sequence => 0},
+ <<33,0,0,0,3,0,1,83,69,76,69,67,84,32,64,115,111,117,
+   114,99,101,95,98,105,110,108,111,103,95,99,104,101,
+   99,107,115,117,109>>}.
+
+{#{packet => #{query => <<"SELECT @@GLOBAL.GTID_MODE">>,
+               action => com_query,
+               parameter_count => 0,
+               parameter_set => 1},
+   sequence => 0},
+ <<28,0,0,0,3,0,1,83,69,76,69,67,84,32,64,64,71,76,79,
+   66,65,76,46,71,84,73,68,95,77,79,68,69>>}.
+
+{#{packet =>
+       #{query => <<"SELECT @@GLOBAL.SERVER_UUID">>,
+         action => com_query,
+         parameter_count => 0,
+         parameter_set => 1},
+   sequence => 0},
+ <<30,0,0,0,3,0,1,83,69,76,69,67,84,32,64,64,71,76,79,
+   66,65,76,46,83,69,82,86,69,82,95,85,85,73,68>>}.
+
+{#{packet => #{query =>
+                   <<"SET @slave_uuid = 'f1f10ed2-2d24-11ee-9f8f-0242ac160002', "
+                     "@replica_uuid = 'f1f10ed2-2d24-11ee-9f8f-0242ac160002'">>,
+               action => com_query,
+               parameter_count => 0,
+               parameter_set => 1},
+   sequence => 0},
+ <<115,0,0,0,3,0,1,83,69,84,32,64,115,108,97,118,101,95,
+   117,117,105,100,32,61,32,39,102,49,102,49,48,101,100,
+   50,45,50,100,50,52,45,49,49,101,101,45,57,102,56,102,
+   45,48,50,52,50,97,99,49,54,48,48,48,50,39,44,32,64,
+   114,101,112,108,105,99,97,95,117,117,105,100,32,61,
+   32,39,102,49,102,49,48,101,100,50,45,50,100,50,52,45,
+   49,49,101,101,45,57,102,56,102,45,48,50,52,50,97,99,
+   49,54,48,48,48,50,39>>}.
+
+
+{#{packet => #{query => <<"@@GLOBAL.SERVER_ID">>,
+               action => com_query,
+               rest => <<0,12,63,0,21,0,0,0,8,160,0,0,0,0>>,
+               parameter_count => 100,
+               parameter_set => 101,
+               unknown_uint4 => 102},
+   sequence => 2},
+ <<40,0,0,
+   2,         % sequence
+   3,
+   100,
+   101,
+   102,0,0,0,18,64,64,71,76,79,66,65,76,46,83,69,82,
+   86,69,82,95,73,68,0,12,63,0,21,0,0,0,8,160,0,0,0,0>>}.
+
+{#{packet => #{query => <<"UNIX_TIMESTAMP()">>,
+               action => com_query,
+               rest => <<0,12,63,0,21,0,0,0,8,129,0,0,0,0>>,
+               parameter_count => 100,
+               parameter_set => 101,
+               unknown_uint4 => 102},
+   sequence => 2},
+ <<38,0,0,2,3,100,101,102,0,0,0,16,85,78,73,88,95,84,73,77,69,83,84,65,
+  77,80,40,41,0,12,63,0,21,0,0,0,8,129,0,0,0,0>>}.

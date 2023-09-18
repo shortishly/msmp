@@ -1,0 +1,36 @@
+%% -*- mode: erlang -*-
+%% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+
+{#{packet => #{action => error,
+               error_code => 1096,
+               sql_state_marker => <<"#">>,
+               sql_state => <<"HY000">>,
+               error_message => <<"No tables used">>},
+   sequence => 1},
+ <<16#17, 16#00, 16#00, 16#01, 16#ff, 16#48, 16#04, 16#23, 16#48,
+   16#59, 16#30, 16#30, 16#30, 16#4e, 16#6f, 16#20, 16#74, 16#61, 16#62,
+   16#6c, 16#65, 16#73, 16#20, 16#75, 16#73, 16#65, 16#64>>}.
+
+{#{packet => #{action => error,
+               error_code => 1159,
+               sql_state_marker => <<"#">>,
+               sql_state => <<"08S01">>,
+               error_message => <<"Got timeout reading communication packets">>},
+   sequence => 1},
+ <<50,0,0,1,255,135,4,35,48,56,83,48,49,71,
+   111,116,32,116,105,109,101,111,117,116,32,
+   114,101,97,100,105,110,103,32,99,111,109,
+   109,117,110,105,99,97,116,105,111,110,32,
+   112,97,99,107,101,116,115>>}.

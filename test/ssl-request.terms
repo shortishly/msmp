@@ -1,0 +1,62 @@
+%% -*- mode: erlang -*-
+%% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+
+{#{packet => #{character_set => 8,
+               action => ssl_request,
+               client_flags => #{interactive => true,
+                                 ssl => true,
+                                 compress => false,
+                                 mfa => true,
+                                 protocol_41 => true,
+                                 session_track => true,
+                                 transactions => true,
+                                 reserved => false,
+                                 plugin_auth => true,
+                                 plugin_auth_lenenc_client_data => true,
+                                 connect_with_db => false,
+                                 connect_attrs => true,
+                                 zstd_compression => false,
+                                 reserved2 => true,
+                                 ignore_sigpipe => false,
+                                 ignore_space => false,
+                                 local_files => true,
+                                 odbc => false,
+                                 no_schema => false,
+                                 long_flag => true,
+                                 found_rows => false,
+                                 long_password => true,
+                                 remember_options => false,
+                                 ssl_verify_cert => false,
+                                 capability_extension => false,
+                                 query_attributes => true,
+                                 optional_resultset_metadata => false,
+                                 deprecate_eof => true,
+                                 can_handle_expired_passwords => true,
+                                 ps_multi_results => true,multi_results => true,
+                                 multi_statements => true},
+               filler => <<0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0>>,
+               max_packet_size => 16777216},
+   sequence => 1},
+ <<32,0,0,
+   1,
+   133,174,255,25,
+   0,0,0,1,
+   8,
+   0,0,0,0,
+   0,0,0,0,
+   0,0,0,0,
+   0,0,0,0,
+   0,0,0,0,
+   0,0,0>>}.

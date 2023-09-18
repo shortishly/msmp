@@ -1,0 +1,19 @@
+---
+services:
+  mysql:
+    image:
+      ${MYSQL_IMAGE:-mysql:${MYSQL_VERSION:-8}}
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+    volumes:
+      - db0:/var/lib/mysql
+      - type: bind
+        source: example/initdb.d/
+        target: /docker-entrypoint-initdb.d/
+    ports:
+      - 3306:3306
+    pull_policy:
+      ${PULL_POLICY:-missing}
+volumes:
+  db0:
+    driver: local

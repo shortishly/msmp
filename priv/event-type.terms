@@ -1,0 +1,60 @@
+%% -*- mode: erlang -*-
+%% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+
+{start_v3, 1}.
+{query, 2}.
+{stop, 3}.
+{rotate, 4}.
+{intvar, 5}.
+
+{slave, 7}.
+
+{append_block, 9}.
+{delete_file, 11}.
+
+{rand, 13}.
+{user_var, 14}.
+{format_description, 15}.
+{xid, 16}.
+{begin_load_query, 17}.
+{execute_load_query, 18}.
+
+{table_map, 19}.
+
+{write_rows_v1, 23}.
+{update_rows_v1, 24}.
+{delete_rows_v1, 25}.
+
+{incident_event, 26}.
+
+{heartbeat_log, 27}.
+
+{ignorable_log, 28}.
+{rows_query_log, 29}.
+
+{write_rows, 30}.
+{update_rows, 31}.
+{delete_rows, 32}.
+
+{gtid_log, 33}.
+{anonymous_gtid_log, 34}.
+{previous_gtids_log, 35}.
+{transaction_context, 36}.
+{view_change, 37}.
+{xa_prepare_log, 38}.
+
+{partial_update_rows, 39}.
+{transaction_payload, 40}.
+{heartbeat, 41}.
