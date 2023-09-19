@@ -44,11 +44,23 @@ decode() ->
                       character_set,
                       msmp_integer_fixed:decode(1)),
 
-                    scran_result:kv(
-                      action,
-                      scran_combinator:value(
-                        handshake_response,
-                        scran_bytes:tag(<<0:23/unit:8>>))),
+                    scran_branch:alt(
+                      [scran_result:kv(
+                         action,
+                         scran_combinator:value(
+                           handshake_response,
+                           scran_bytes:tag(<<0:23/unit:8>>))),
+
+                       scran_sequence:sequence(
+                         [scran_result:kv(
+                            action,
+                            scran_combinator:value(
+                              handshake_response,
+                              scran_bytes:tag(<<0:19/unit:8>>))),
+
+                          scran_result:kv(
+                            extended_capabilities,
+                            msmp_integer_fixed:decode(4))])]),
 
                     scran_result:kv(
                       username,
@@ -105,32 +117,108 @@ decode() ->
 encode() ->
     fun
         (#{action := handshake_response,
+           extended_capabilities := _,
            client_flags := #{plugin_auth_lenenc_client_data := LengthEncoded,
                              connect_with_db := ConnectWithDB,
                              plugin_auth := PluginAuth,
                              connect_attrs := ConnectAttrs,
                              zstd_compression := ZStdCompression}} = Decoded) ->
             (narcs_sequence:sequence(
-               [narcs_combinator:v(client_flags, msmp_capabilities:encode(combined)),
-                narcs_combinator:v(max_packet_size, msmp_integer_fixed:encode(4)),
-                narcs_combinator:v(character_set, msmp_integer_fixed:encode(1)),
-                narcs_bytes:tag(<<0:23/unit:8>>),
-                narcs_combinator:v(username, msmp_string_null_terminated:encode()),
+               [narcs_combinator:v(
+                  client_flags,
+                  msmp_capabilities:encode(combined)),
+                narcs_combinator:v(
+                  max_packet_size,
+                  msmp_integer_fixed:encode(4)),
+                narcs_combinator:v(
+                  character_set,
+                  msmp_integer_fixed:encode(1)),
+                narcs_bytes:tag(<<0:19/unit:8>>),
+                narcs_combinator:v(
+                  extended_capabilities,
+                  msmp_integer_fixed:encode(4)),
+                narcs_combinator:v(
+                  username,
+                  msmp_string_null_terminated:encode()),
 
                 narcs_combinator:condition(
                   LengthEncoded,
-                  narcs_combinator:v(auth_response, msmp_string_length_encoded:encode())),
+                  narcs_combinator:v(
+                    auth_response,
+                    msmp_string_length_encoded:encode())),
 
                narcs_combinator:condition(
                  ConnectWithDB,
-                 narcs_combinator:v(database, msmp_string_null_terminated:encode())),
+                 narcs_combinator:v(
+                   database,
+                   msmp_string_null_terminated:encode())),
 
                narcs_combinator:condition(
                  PluginAuth,
-                 narcs_combinator:v(client_plugin_name,
-                          narcs_combinator:map_result(
-                            narcs_bytes:from_atom(),
-                            narcs_bytes:null_terminated()))),
+                 narcs_combinator:v(
+                   client_plugin_name,
+                   narcs_combinator:map_result(
+                     narcs_bytes:from_atom(),
+                     narcs_bytes:null_terminated()))),
+
+                narcs_combinator:condition(
+                  ConnectAttrs,
+                  narcs_combinator:v(
+                    connect_attrs,
+                    narcs_combinator:map_result(
+                      narcs_sequence:sequence(
+                        msmp_string_length_encoded:encode(),
+                        msmp_string_length_encoded:encode()),
+                      narcs_bytes:length_encoded(
+                        msmp_integer_variable:encode())))),
+
+                narcs_combinator:condition(
+                  ZStdCompression,
+                  narcs_combinator:v(
+                    zstd_compression_level,
+                    msmp_integer_fixed:encode(1)))]))(Decoded);
+
+
+        (#{action := handshake_response,
+           client_flags := #{plugin_auth_lenenc_client_data := LengthEncoded,
+                             connect_with_db := ConnectWithDB,
+                             plugin_auth := PluginAuth,
+                             connect_attrs := ConnectAttrs,
+                             zstd_compression := ZStdCompression}} = Decoded) ->
+            (narcs_sequence:sequence(
+               [narcs_combinator:v(
+                  client_flags,
+                  msmp_capabilities:encode(combined)),
+                narcs_combinator:v(
+                  max_packet_size,
+                  msmp_integer_fixed:encode(4)),
+                narcs_combinator:v(
+                  character_set,
+                  msmp_integer_fixed:encode(1)),
+                narcs_bytes:tag(<<0:23/unit:8>>),
+                narcs_combinator:v(
+                  username,
+                  msmp_string_null_terminated:encode()),
+
+                narcs_combinator:condition(
+                  LengthEncoded,
+                  narcs_combinator:v(
+                    auth_response,
+                    msmp_string_length_encoded:encode())),
+
+               narcs_combinator:condition(
+                 ConnectWithDB,
+                 narcs_combinator:v(
+                   database,
+                   msmp_string_null_terminated:encode())),
+
+               narcs_combinator:condition(
+                 PluginAuth,
+                 narcs_combinator:v(
+                   client_plugin_name,
+                   narcs_combinator:map_result(
+                     narcs_bytes:from_atom(),
+                     narcs_bytes:null_terminated()))),
 
                 narcs_combinator:condition(
                   ConnectAttrs,

@@ -20,7 +20,7 @@
 
 
 -export([decode/1]).
--export([encode/0]).
+-export([encode/1]).
 
 
 decode(ClientFlags) ->
@@ -73,21 +73,29 @@ decode(ClientFlags) ->
 
                              scran_result:kv(
                                rest,
-                               scran_combinator:rest())])])]))])))(Input)
+                               scran_combinator:rest())])])]),
+
+                    scran_sequence:sequence(
+                     [scran_result:kv(
+                        query,
+                        scran_combinator:rest())]))])))(Input)
     end.
 
 
-encode() ->
+encode(#{query_attributes := QueryAttributes}) ->
     fun
         (#{action := query} = Decoded) ->
             (narcs_sequence:sequence(
                [narcs_bytes:tag(<<3>>),
-                narcs_combinator:v(
-                  parameter_count,
-                  msmp_integer_fixed:encode(1)),
-                narcs_combinator:v(
-                  parameter_set,
-                  msmp_integer_fixed:encode(1)),
+                narcs_combinator:condition(
+                  QueryAttributes,
+                  narcs_sequence:sequence(
+                    [narcs_combinator:v(
+                       parameter_count,
+                       msmp_integer_fixed:encode(1)),
+                     narcs_combinator:v(
+                       parameter_set,
+                       msmp_integer_fixed:encode(1))])),
                 narcs_combinator:v(
                   query,
                   narcs_combinator:rest())]))(Decoded);

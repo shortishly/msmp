@@ -16,6 +16,7 @@
 -module(msmp_handshake_response_tests).
 
 
+-import(msmp_tests, [consult/1]).
 -import(msmp_tests, [t/1]).
 -import(msmp_tests, [t/2]).
 -include_lib("eunit/include/eunit.hrl").
@@ -33,12 +34,22 @@ encode_test_() ->
             (Decoded) ->
                 Encode = (msmp_codec:encode(msmp_handshake_response:encode())),
                 Decode = (msmp_codec:decode(msmp_handshake_response:decode())),
-                {<<>>, Result} = Decode(iolist_to_binary(Encode(Decoded))),
-                Result
+
+                Encoded = Encode(Decoded),
+
+                case Decode(iolist_to_binary(Encoded)) of
+                    {<<>>, Decoded} ->
+                        Decoded;
+
+                    {<<>>, DecodedOtherwise} ->
+                        ?debugVal(Decoded, -1),
+                        ?debugVal(Encoded, -1),
+                        ?debugVal(DecodedOtherwise, -1),
+                        DecodedOtherwise
+                end
         end),
       [{match, Decoded, Decoded} ||
-          {Decoded, _Encoded} <- phrase_file:consult(
-                                   "test/handshake-response.terms")]).
+          {Decoded, _Encoded} <- consult("test/handshake-response.terms")]).
 
 
 auth_response_test_() ->

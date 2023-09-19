@@ -50,6 +50,16 @@ decode() ->
 
 encode() ->
     fun
+        (#{action := ssl_request, extended_capabilities := _} = Decoded) ->
+            (narcs_sequence:sequence(
+               [narcs_combinator:v(client_flags, msmp_capabilities:encode(combined)),
+                narcs_combinator:v(max_packet_size, msmp_integer_fixed:encode(4)),
+                narcs_combinator:v(character_set, msmp_integer_fixed:encode(1)),
+                narcs_bytes:tag(<<0:19/unit:8>>),
+                narcs_combinator:v(
+                  extended_capabilities,
+                  msmp_integer_fixed:encode(4))]))(Decoded);
+
         (#{action := ssl_request} = Decoded) ->
             (narcs_sequence:sequence(
                [narcs_combinator:v(client_flags, msmp_capabilities:encode(combined)),

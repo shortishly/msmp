@@ -1,3 +1,4 @@
+%% -*- mode: erlang -*-
 %% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,21 +14,13 @@
 %% limitations under the License.
 
 
--module(msmp_com_query_tests).
+{#{packet => #{query => <<"select @@version_comment limit 1">>,
+               action => com_query},
+   sequence => 0},
+ <<33,0,0,0,3,115,101,108,101,99,116,32,64,64,118,101,114,115,105,111,
+   110,95,99,111,109,109,101,110,116,32,108,105,109,105,116,32,49>>}.
 
-
--include_lib("eunit/include/eunit.hrl").
--import(msmp_tests, [t/2]).
-
-
-decode_test_() ->
-    t(msmp_codec:decode(
-        msmp_com_query:decode(
-          #{query_attributes => true})),
-      "test/com-query.terms").
-
-decode_na_test_() ->
-    t(msmp_codec:decode(
-        msmp_com_query:decode(
-          #{query_attributes => false})),
-      "test/com-query-na.terms").
+{#{packet => #{query => <<"select 2 + 2">>,
+               action => com_query},
+   sequence => 0},
+ <<13,0,0,0,3,115,101,108,101,99,116,32,50,32,43,32,50>>}.

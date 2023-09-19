@@ -52,7 +52,8 @@ decode() ->
 
                          sequence(
                            [kv(reserved, tag(<<0:6/unit:8>>)),
-                            kv(capability_flags_3, msmp_integer_fixed:decode(4))])])])),
+                            kv(extended_capabilities,
+                               msmp_integer_fixed:decode(4))])])])),
                fun
                    (#{capability_flags_2 := #{plugin_auth := true},
                       auth_plugin_data_len := AuthPluginDataLen}) ->

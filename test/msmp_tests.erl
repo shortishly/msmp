@@ -16,6 +16,7 @@
 -module(msmp_tests).
 
 
+-export([consult/1]).
 -export([flip/1]).
 -export([nm/1]).
 -export([t/1]).
@@ -24,10 +25,13 @@
 
 
 t(FUT, TestFilename) ->
-    {ok, Tests} = file:consult(TestFilename),
-    lists:map(
-      t(FUT),
-      Tests).
+    lists:map(t(FUT), consult(TestFilename)).
+
+
+consult(Filename) ->
+    {ok, Terms} = file:consult(Filename),
+    Terms.
+
 
 t(F) ->
     fun
