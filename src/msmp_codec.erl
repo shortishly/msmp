@@ -20,7 +20,6 @@
 
 
 -export([decode/1]).
--export([encode/0]).
 -export([encode/1]).
 -include_lib("kernel/include/logger.hrl").
 
@@ -42,13 +41,6 @@ decode(Parser) ->
                    [scran_result:kv(sequence, msmp_integer_fixed:decode(1)),
                     scran_result:kv(packet, Parser)]))))(Input)
     end.
-
-
-encode() ->
-    ?FUNCTION_NAME(
-       narcs_branch:alt(
-         [msmp_handshake_response:encode(),
-          msmp_com_query:encode()])).
 
 
 encode(Parser) ->
