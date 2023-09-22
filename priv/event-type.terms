@@ -58,3 +58,18 @@
 {partial_update_rows, 39}.
 {transaction_payload, 40}.
 {heartbeat, 41}.
+
+
+%% MariaDB events
+{annotate_rows, 160}.
+{binlog_checkpoint, 161}.
+{gtid, 162}.
+{gtid_list, 163}.
+{start_encryption, 164}.
+{query_compressed, 165}.
+{write_rows_compressed_v1, 166}.
+{update_rows_compressed_v1, 167}.
+{delete_rows_compressed_v1, 168}.
+{write_rows_compressed, 169}.
+{update_rows_compressed, 170}.
+{delete_rows_compressed, 171}.

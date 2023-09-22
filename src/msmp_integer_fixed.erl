@@ -18,15 +18,27 @@
 -module(msmp_integer_fixed).
 
 
+-feature(maybe_expr, enable).
+
+
 -export([decode/1]).
 -export([encode/1]).
 
 
 %% @doc Decode a fixed size little endian unsigned integer.
--spec decode(pos_integer()) -> scran:parser(binary(), non_neg_integer()).
+-spec decode(pos_integer() | scran_number:uparser()) -> scran:parser(binary(), non_neg_integer()).
 
-decode(Bytes) ->
-    scran_number:u(little, Bytes * 8).
+decode(Bytes) when is_integer(Bytes) ->
+    scran_number:u(little, Bytes * 8);
+
+decode(ByteLengthParser) ->
+    fun
+        (Input) ->
+            maybe
+                {Remaining, Bytes} ?= ByteLengthParser(Input),
+                (decode(Bytes))(Remaining)
+            end
+    end.
 
 
 %% @doc Encode a fixed size little endian unsigned integer.

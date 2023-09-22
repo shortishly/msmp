@@ -19,6 +19,9 @@
 -feature(maybe_expr, enable).
 
 
+-define(FL_COMPLETED_XA, 128).
+-define(FL_GROUP_COMMIT_ID, 2).
+-define(FL_PREPARED_XA, 64).
 -export([decode/0]).
 -export([decode/1]).
 -export([rows/1]).
@@ -45,7 +48,6 @@
 -import(scran_sequence, [sequence/1]).
 -include_lib("kernel/include/logger.hrl").
 -on_load(on_load/0).
-
 
 on_load() ->
     persistent_term:put(
@@ -249,8 +251,14 @@ event(_, #{event_type := table_map}) ->
 
 event(#{mapped := Mapped}, #{event_type := EventType})
   when EventType == update_rows;
+       EventType == update_rows_v1;
+       EventType == update_rows_compressed_v1;
        EventType == write_rows;
-       EventType == delete_rows ->
+       EventType == write_rows_v1;
+       EventType == write_rows_compressed_v1;
+       EventType == delete_rows;
+       EventType == delete_rows_v1;
+       EventType == delete_rows_compressed_v1->
     fun
         (Input) ->
             (followed_with(
@@ -265,14 +273,18 @@ event(#{mapped := Mapped}, #{event_type := EventType})
                          sequence(
                            [kv(table_id, success(TableId)),
                             kv(flags, msmp_integer_fixed:decode(2)),
-                            kv(extra_row_info,
-                               length_encoded(
-                                 map_result(
-                                   msmp_integer_fixed:decode(2),
-                                   fun
-                                       (Length) ->
-                                           Length - 2
-                                   end))),
+                            condition(
+                              EventType == write_rows orelse
+                              EventType == update_rows orelse
+                              EventType == delete_rows,
+                              kv(extra_row_info,
+                                 length_encoded(
+                                   map_result(
+                                     msmp_integer_fixed:decode(2),
+                                     fun
+                                         (Length) ->
+                                             Length - 2
+                                     end)))),
                             kv(columns, msmp_integer_variable:decode()),
                             condition(
                               EventType == update_rows,
@@ -284,18 +296,40 @@ event(#{mapped := Mapped}, #{event_type := EventType})
                                         bitmap(length(ColTypes))))),
 
                                  kv(rows,
-                                    many1(
-                                      into_tuple(
-                                        pair(
-                                          row(Mapping),
-                                          row(Mapping)))))]),
+                                    condition(
+                                      EventType == update_rows_compressed_v1,
+                                      map_parser(
+                                        uncompress(),
+                                        many1(
+                                          into_tuple(
+                                            pair(
+                                              row(Mapping),
+                                              row(Mapping))))),
+
+                                      %% uncompressed
+                                      many1(
+                                        into_tuple(
+                                          pair(
+                                            row(Mapping),
+                                            row(Mapping))))))]),
+
                               sequence(
                                 [kv(bitmap, bitmap(length(ColTypes))),
-                                 kv(rows, many1(row(Mapping)))]))]))
+                                 kv(rows,
+                                    condition(
+                                      EventType == write_rows_compressed_v1,
+                                      map_parser(
+                                        uncompress(),
+                                        many1(row(Mapping))),
+
+                                      %% uncompressed
+                                      many1(row(Mapping))))]))]))
                end))(Input)
     end;
 
-event(Arg, #{event_type := query} = Header) ->
+event(Arg, #{event_type := EventType} = Header)
+  when EventType == query;
+       EventType == query_compressed ->
     fun
         (Input) ->
             ?LOG_DEBUG(#{arg => Arg, header => Header}),
@@ -314,7 +348,108 @@ event(Arg, #{event_type := query} = Header) ->
                             take(msmp_integer_fixed:decode(2)),
                             msmp_status_variable:decode())),
                        kv(schema, msmp_string_null_terminated:decode()),
-                       kv(sql, rest())]))])))(Input)
+                       condition(
+                         EventType == query,
+                         kv(sql, rest()),
+                         kv(sql, uncompress()))]))])))(Input)
+    end;
+
+event(_Arg, #{event_type := intvar}) ->
+    fun
+        (Input) ->
+            (into_map(
+               sequence(
+                 [scran_branch:alt(
+                    [kv(type, scran_combinator:value(last_insert_id, tag(<<1>>))),
+                     kv(type, scran_combinator:value(insert_id, tag(<<2>>)))]),
+                  kv(value, msmp_integer_fixed:decode(8))])))(Input)
+    end;
+
+event(Arg, #{event_type := gtid_list} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+
+            (scran_sequence:combined_with(
+               into_map(
+                 sequence(
+                   [kv(count, scran_number:u(little, 28)),
+                    kv(flags, scran_number:u(little, 4))])),
+               fun
+                   (#{count := Count} = Initial) ->
+                       ?LOG_DEBUG(#{initial => Initial}),
+
+                       into_map(
+                         scran_sequence:sequence(
+                           [kv(gtids,
+                               scran_multi:count(
+                                 Count,
+                                 into_map(
+                                   sequence(
+                                     [kv(domain, msmp_integer_fixed:decode(4)),
+                                      kv(server, msmp_integer_fixed:decode(4)),
+                                      kv(sequence, msmp_integer_fixed:decode(8))]))))]))
+               end))(Input)
+    end;
+
+event(Arg, #{event_type := binlog_checkpoint} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               sequence(
+                 [kv(filename, scran_bytes:take(scran_number:u32(little)))])))(Input)
+    end;
+
+event(Arg, #{event_type := gtid} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               sequence(
+                 [kv(sequence, msmp_integer_fixed:decode(8)),
+                  kv(domain, msmp_integer_fixed:decode(4)),
+                  kv(flags2, msmp_integer_fixed:decode(1)),
+                  kv(data, scran_combinator:rest())])))(Input)
+    end;
+
+event(Arg, #{event_type := xid} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               sequence(
+                 [kv(xid, scran_bytes:take(8))])))(Input)
+    end;
+
+event(Arg, #{event_type := heartbeat_log} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               sequence(
+                 [kv(log_ident, rest())])))(Input)
+    end;
+
+event(Arg, #{event_type := stop} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               sequence(
+                 [ignore(scran_combinator:eof())])))(Input)
     end;
 
 event(Arg, Header) ->
@@ -466,3 +601,26 @@ bitmap(N) ->
 
 bitmap_bytes(N) ->
     (N + 7) div 8.
+
+
+uncompress() ->
+    fun
+        (Input) ->
+            maybe
+                {Compressed, Length} ?= (msmp_integer_fixed:decode(
+                                           scran_combinator:map_result(
+                                             msmp_integer_fixed:decode(1),
+                                             fun
+                                                 (Result) ->
+                                                     Result band 16#07
+                                             end)))(Input),
+
+                case zlib:uncompress(Compressed) of
+                    Uncompressed when byte_size(Uncompressed) == Length ->
+                        {<<>>, Uncompressed};
+
+                    _ ->
+                        nomatch
+                end
+            end
+    end.

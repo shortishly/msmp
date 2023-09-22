@@ -47,5 +47,9 @@ dep_narcs = git https://github.com/shortishly/narcs.git
 dep_phrase = git https://github.com/shortishly/phrase.git
 dep_scran = git https://github.com/shortishly/scran.git
 
+# dep_narcs = ln ../../narcs
+# dep_phrase = ln ../../phrase
+# dep_scran = ln ../../scran
+
 
 include $(if $(ERLANG_MK_FILENAME),$(ERLANG_MK_FILENAME),erlang.mk)

@@ -45,6 +45,9 @@ decode() ->
                     ddl_xid(),
                     default_collation_for_utf8mb4(),
 
+                    %% mariadb
+                    xid(),
+
                     %% catch all
                     unknown()])))(Input)
     end.
@@ -77,17 +80,27 @@ catalog_nz() ->
             (variable(?FUNCTION_NAME, take(msmp_integer_fixed:decode(1))))(Input)
     end.
 
+
 ddl_xid() ->
     fun
         (Input) ->
             (variable(?FUNCTION_NAME, msmp_integer_fixed:decode(8)))(Input)
     end.
 
+
 default_collation_for_utf8mb4() ->
     fun
         (Input) ->
             (variable(?FUNCTION_NAME, msmp_integer_fixed:decode(2)))(Input)
     end.
+
+
+xid() ->
+    fun
+        (Input) ->
+            (variable(?FUNCTION_NAME, msmp_integer_fixed:decode(8)))(Input)
+    end.
+
 
 unknown() ->
     fun
