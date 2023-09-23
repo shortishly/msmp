@@ -126,6 +126,18 @@ value(column_name = Tag, ColTypes) ->
             (many1(msmp_string_length_encoded:decode()))(Input)
     end;
 
+value(eunm_str_value = Tag, ColTypes) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{tag => Tag,
+                         col_types => ColTypes,
+                         input => Input}),
+            (many1(
+               count(
+                 msmp_integer_variable:decode(),
+                 msmp_string_length_encoded:decode())))(Input)
+    end;
+
 value(Tag, ColTypes) ->
     %% TODO remove this catch all for unhandled tlv
     fun

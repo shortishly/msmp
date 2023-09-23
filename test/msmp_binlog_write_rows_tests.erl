@@ -972,3 +972,43 @@ t0018_test_() ->
          32,34,50,48,49,53,45,48,55,45,50,57,34,44,32,34,50,48,49,53,45,48,55,
          45,50,57,32,49,50,58,49,56,58,50,57,46,48,48,48,48,48,48,34,93,142,5,
          113,208>>}]).
+
+t0019_test_() ->
+    Mapped = #{34 => #{flags => 1,
+                       table => <<"t0019">>,
+                       metadata => #{unsignedness => #{1 => true},
+                                     column_name => [<<"i">>,<<"q0">>],
+                                     simple_primary_key => [0],
+                                     eunm_str_value =>
+                                         <<5,7,120,45,115,109,97,108,108,5,115,109,97,108,108,6,
+                                           109,101,100,105,117,109,5,108,97,114,103,101,7,120,
+                                           45,108,97,114,103,101>>,
+                                     enum_and_set_default_charset => <<"-">>},
+                       table_id => 34,
+                       database => <<"test">>,
+                       field_metadata => #{1 => undefined,
+                                           2 => #{length => 1, field_type => enum}},
+                       coltypes => [longlong,string],
+                       null_bitmap => <<2>>}},
+    lists:map(
+      t(msmp_codec:decode(
+          msmp_binlog_network_stream:decode(
+            #{mapped => Mapped}))),
+          [{#{packet => #{header => #{flags => 0,
+                                      timestamp => 1695476703,
+                                      server_id => 100,
+                                      event_type => write_rows_compressed_v1,
+                                      event_size => 68,
+                                      log_pos => 23127},
+                          action => log_event,
+                          event => #{flags => 1,
+                                     columns => 2,
+                                     rows => [{1,1}, {2,2}, {3,3}, {4,4}, {5,5}],
+                                     table_id => 34,
+                                     bitmap => 255},
+                          footer => <<"¦\vÊi">>},
+              sequence => 33},
+            <<69,0,0,33,0,223,235,14,101,166,100,0,0,0,68,0,0,0,87,90,0,0,0,0,34,0,
+              0,0,0,0,1,0,2,255,129,50,120,156,251,195,200,0,1,140,127,152,160,44,
+              166,63,204,80,22,243,31,22,40,139,229,15,43,148,197,10,0,150,0,5,11,
+              166,11,202,105>>}]).
