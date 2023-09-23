@@ -262,6 +262,51 @@ int24_test_() ->
          118,0,0,0,0,0,1,0,2,0,3,255,2,6,0,0,0,0,0,0,0,0,0,0,2,7,0,0,0,0,0,0,0,
          255,255,255,64,164,191,211>>}]).
 
+t1_test_() ->
+    Mapped = #{34 => #{flags => 1,
+                       table => <<"t1">>,
+                       metadata => #{unsignedness => #{1 => false},
+                                     column_name => [<<"i">>,
+                                                     <<"msg">>,
+                                                     <<"d">>,
+                                                     <<"t">>,
+                                                     <<"dt">>],
+                                     default_charset => "-",
+                                     simple_primary_key => [0]},
+                       database => <<"test">>,
+                       field_metadata => #{1 => undefined,
+                                           2 => 200,
+                                           3 => undefined,
+                                           4 => 0,
+                                           5 => 0},
+                       coltypes => [long,
+                                    varchar,
+                                    date,
+                                    time2,
+                                    datetime2],
+                       null_bitmap => <<30>>}},
+    lists:map(
+      t(msmp_codec:decode(
+          msmp_binlog_network_stream:decode(
+            #{mapped => Mapped}))),
+      [{#{packet => #{header => #{flags => 0,
+                                  timestamp => 1695222974,
+                                  event_type => write_rows_v1,
+                                  server_id => 100,
+                                  event_size => 55,
+                                  log_pos => 93277},
+                      action => log_event,
+                      event => #{flags => 1,
+                                 columns => 5,
+                                 rows => [{1, <<"test1">>, {2023,9,20}, {15,16,25}, 1695222974000000}],
+                                 table_id => 34,
+                                 bitmap => 255},
+                      footer => <<217,59,128,77>>},
+          sequence => 33},
+        <<56,0,0,33,0,190,12,11,101,23,100,0,0,0,55,0,0,0,93,108,1,0,0,0,34,0,0,
+          0,0,0,1,0,5,255,224,1,0,0,0,5,116,101,115,116,49,52,207,15,128,244,25,
+          153,177,40,244,14,217,59,128,77>>}]).
+
 
 t6_test_() ->
     Mapped = #{119 => #{flags => 1,
@@ -824,6 +869,42 @@ t0014_test_() ->
          0,0,0,0,1,0,3,255,250,4,0,0,0,0,0,0,0,129,13,251,56,210,4,210,250,5,0,
          0,0,0,0,0,0,128,0,0,0,0,0,0,250,6,0,0,0,0,0,0,0,126,242,4,199,45,251,
          45,81,168,202,102>>}]).
+
+
+t0017_test_() ->
+    Mapped = #{32 => #{flags => 1,
+                       table => <<"t0017">>,
+                       metadata => #{unsignedness => #{1 => true},
+                                     column_name => [<<"i">>,<<"q0">>],
+                                     simple_primary_key => [0]},
+                       database => <<"test">>,
+                       field_metadata => #{1 => undefined, 2 => 6},
+                       coltypes => [longlong,bit],
+                       null_bitmap => <<2>>}},
+    lists:map(
+      t(msmp_codec:decode(
+          msmp_binlog_network_stream:decode(
+            #{mapped => Mapped}))),
+      [{#{packet => #{header => #{flags => 0,
+                                  timestamp => 1695222973,
+                                  server_id => 100,
+                                  event_type => write_rows_v1,
+                                  event_size => 73,
+                                  log_pos => 19410},
+                      action => log_event,
+                      event => #{flags => 1,
+                                 columns => 2,
+                                 rows => [{1, <<5:6>>},
+                                          {2, <<0:6>>},
+                                          {3, <<7:6>>},
+                                          {4, <<63:6>>}],
+                                 table_id => 32,
+                                 bitmap => 255},
+                      footer => <<"7rýê">>},
+          sequence => 173},
+        <<74,0,0,173,0,189,12,11,101,23,100,0,0,0,73,0,0,0,210,75,0,0,0,0,32,0,
+          0,0,0,0,1,0,2,255,252,1,0,0,0,0,0,0,0,5,252,2,0,0,0,0,0,0,0,0,252,3,0,
+          0,0,0,0,0,0,7,252,4,0,0,0,0,0,0,0,63,55,114,253,234>>}]).
 
 
 t0018_test_() ->
