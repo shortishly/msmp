@@ -126,7 +126,7 @@ value(column_name = Tag, ColTypes) ->
             (many1(msmp_string_length_encoded:decode()))(Input)
     end;
 
-value(eunm_str_value = Tag, ColTypes) ->
+value(enum_str_value = Tag, ColTypes) ->
     fun
         (Input) ->
             ?LOG_DEBUG(#{tag => Tag,

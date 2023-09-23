@@ -19,7 +19,7 @@ default_charset.
 column_charset.
 column_name.
 set_str_value.
-eunm_str_value.
+enum_str_value.
 geometry_type.
 simple_primary_key.
 primary_key_with_prefix.
