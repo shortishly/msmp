@@ -104,6 +104,13 @@ decode(string, _, #{field_type := string}) ->
                 msmp_integer_fixed:decode(2)))(Input)
     end;
 
+decode(blob, _, Length) ->
+    fun
+        (Input) ->
+            (scran_bytes:length_encoded(
+                msmp_integer_fixed:decode(Length)))(Input)
+    end;
+
 decode(varchar, _, Length) when is_integer(Length), Length < 256 ->
     fun
         (Input) ->
@@ -400,6 +407,9 @@ decode(double, _, _) ->
                scran_number:precision(15)))(Input)
     end;
 
+decode(newdecimal, _, #{precision := Precision, scale := Scale}) ->
+    msmp_decimal:decode(Precision, Scale);
+
 decode(bit, _, 0) ->
     fun
         (Input) ->
@@ -417,9 +427,13 @@ decode(bit, _, Bits) ->
                end))(Input)
     end;
 
-decode(_, _, _) ->
+decode(Type, Unsigned, Metadata) ->
     fun
         (Input) ->
+            ?LOG_WARNING(#{type => Type,
+                           unsigned => Unsigned,
+                           metadata => Metadata,
+                           input => Input}),
             (rest())(Input)
     end.
 
