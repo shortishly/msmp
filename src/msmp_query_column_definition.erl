@@ -59,7 +59,9 @@ decode() ->
                       msmp_integer_fixed:decode(4)),
                     scran_result:kv(
                       type,
-                      msmp_integer_fixed:decode(1)),
+                      scran_combinator:map_result(
+                        msmp_integer_fixed:decode(1),
+                        fun msmp_field:lookup/1)),
                     scran_result:kv(
                       flags,
                       msmp_integer_fixed:decode(2)),
