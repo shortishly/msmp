@@ -60,18 +60,23 @@ encode(#{query_attributes := QueryAttributes}) ->
                 values()]))(Decoded)
     end.
 
+
 types() ->
     fun
-        (#{types := Types}) ->
+        (#{types := Types, parameters := Parameters}) ->
             lists:map(
               fun
-                  (#{type := Type, flags := #{unsigned := true}}) ->
-                      [msmp_field:lookup(Type), 16#80];
+                  ({#{type := Type, flags := #{unsigned := Unsigned}}, Value}) ->
+                      [msmp_field:lookup(type(Type, Value)),
+                       case Unsigned of
+                           true ->
+                               16#80;
 
-                  (#{type := Type}) ->
-                      [msmp_field:lookup(Type), 0]
+                           false ->
+                               0
+                       end]
               end,
-              Types)
+              lists:zip(Types, Parameters))
     end.
 
 
@@ -95,8 +100,27 @@ values() ->
                   ({_, null}) ->
                       false;
 
-                  ({Type, Parameter}) ->
-                      {true, (msmp_binary:encode(Type))(Parameter)}
+                  ({Definition, Parameter}) ->
+                      {true,
+                       (msmp_binary:encode(
+                          type(Definition, Parameter)))
+                         (Parameter)}
               end,
               lists:zip(Types, Parameters))
     end.
+
+
+type(#{type := null = Type} = Definition, Parameter) ->
+    Definition#{type := type(Type, Parameter)};
+
+type(#{type := _} = Definition, _) ->
+    Definition;
+
+type(null, Parameter) when is_integer(Parameter) ->
+    longlong;
+
+type(null, Parameter) when is_float(Parameter) ->
+    double;
+
+type(null, Parameter) when is_binary(Parameter) ->
+    varchar.
