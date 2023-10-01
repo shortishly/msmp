@@ -123,4 +123,7 @@ type(null, Parameter) when is_float(Parameter) ->
     double;
 
 type(null, Parameter) when is_binary(Parameter) ->
-    varchar.
+    varchar;
+
+type(Type, _) when is_atom(Type) ->
+    Type.
