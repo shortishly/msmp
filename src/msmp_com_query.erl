@@ -32,7 +32,7 @@ decode(ClientFlags) ->
                     action,
                     scran_combinator:value(
                       com_query,
-                      scran_bytes:tag(<<3>>))),
+                      scran_bytes:tag(command()))),
 
                   scran_combinator:condition(
                     fun
@@ -84,9 +84,9 @@ decode(ClientFlags) ->
 
 encode(#{query_attributes := QueryAttributes}) ->
     fun
-        (#{action := query} = Decoded) ->
+        (Decoded) ->
             (narcs_sequence:sequence(
-               [narcs_bytes:tag(<<3>>),
+               [narcs_bytes:tag(command()),
                 narcs_combinator:condition(
                   QueryAttributes,
                   narcs_sequence:sequence(
@@ -98,8 +98,9 @@ encode(#{query_attributes := QueryAttributes}) ->
                        msmp_integer_fixed:encode(1))])),
                 narcs_combinator:v(
                   query,
-                  narcs_combinator:rest())]))(Decoded);
-
-        (_) ->
-            nomatch
+                  narcs_combinator:rest())]))(Decoded)
     end.
+
+
+command() ->
+    <<3>>.

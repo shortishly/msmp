@@ -13,7 +13,7 @@
 %% limitations under the License.
 
 
--module(msmp_field_tests).
+-module(msmp_binlog_field_tests).
 
 
 -import(msmp_tests, [t/1]).
@@ -37,43 +37,43 @@ into_rfc3339(Parser) ->
 
 datetime2_0_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(datetime2, ignored, 0))),
+      t(into_rfc3339(msmp_binlog_field:decode(datetime2, ignored, 0))),
       [{"1000-01-01T00:00:00.000000Z", <<140, 178,  66,   0,   0>>},
        {"9999-12-31T23:59:59.000000Z", <<254, 243, 255, 126, 251>>}]).
 
 datetime2_1_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(datetime2, ignored, 1))),
+      t(into_rfc3339(msmp_binlog_field:decode(datetime2, ignored, 1))),
       [{"1000-01-01T00:00:00.600000Z", <<140, 178,  66,   0,   0, 60>>},
        {"9999-12-31T23:59:59.600000Z", <<254, 243, 255, 126, 251, 60>>}]).
 
 datetime2_2_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(datetime2, ignored, 2))),
+      t(into_rfc3339(msmp_binlog_field:decode(datetime2, ignored, 2))),
       [{"1000-01-01T00:00:00.650000Z", <<140, 178,  66,   0,   0, 65>>},
        {"9999-12-31T23:59:59.650000Z", <<254, 243, 255, 126, 251, 65>>}]).
 
 datetime2_3_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(datetime2, ignored, 3))),
+      t(into_rfc3339(msmp_binlog_field:decode(datetime2, ignored, 3))),
       [{"1000-01-01T00:00:00.654000Z", <<140, 178,  66,   0,   0, 25, 140>>},
        {"9999-12-31T23:59:59.654000Z", <<254, 243, 255, 126, 251, 25, 140>>}]).
 
 datetime2_4_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(datetime2, ignored, 4))),
+      t(into_rfc3339(msmp_binlog_field:decode(datetime2, ignored, 4))),
       [{"1000-01-01T00:00:00.654300Z", <<140, 178,  66,   0,   0, 25, 143>>},
        {"9999-12-31T23:59:59.654300Z", <<254, 243, 255, 126, 251, 25, 143>>}]).
 
 datetime2_5_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(datetime2, ignored, 5))),
+      t(into_rfc3339(msmp_binlog_field:decode(datetime2, ignored, 5))),
       [{"1000-01-01T00:00:00.654320Z", <<140, 178,  66,   0,   0, 9, 251, 240>>},
        {"9999-12-31T23:59:59.654320Z", <<254, 243, 255, 126, 251, 9, 251, 240>>}]).
 
 datetime2_6_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(datetime2, ignored, 6))),
+      t(into_rfc3339(msmp_binlog_field:decode(datetime2, ignored, 6))),
       [{"1000-01-01T00:00:00.000000Z", <<140, 178,  66,   0,   0,  0,  0,  0>>},
        {"1000-01-01T00:00:00.654321Z", <<140, 178,  66,   0,   0, 9, 251, 241>>},
        {"9999-12-31T23:59:59.654321Z", <<254, 243, 255, 126, 251, 9, 251, 241>>},
@@ -82,100 +82,100 @@ datetime2_6_test_() ->
 
 timestamp2_0_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(timestamp2, ignored, 0))),
+      t(into_rfc3339(msmp_binlog_field:decode(timestamp2, ignored, 0))),
       [{"1970-01-01T00:00:01.000000Z", <<  0,   0,   0,   1>>},
        {"2038-01-19T03:14:07.000000Z", <<127, 255, 255, 255>>}]).
 
 timestamp2_1_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(timestamp2, ignored, 1))),
+      t(into_rfc3339(msmp_binlog_field:decode(timestamp2, ignored, 1))),
       [{"1970-01-01T00:00:01.600000Z", <<  0,   0,   0,   1, 60>>},
        {"2038-01-19T03:14:07.100000Z", <<127, 255, 255, 255, 10>>}]).
 
 timestamp2_2_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(timestamp2, ignored, 2))),
+      t(into_rfc3339(msmp_binlog_field:decode(timestamp2, ignored, 2))),
       [{"1970-01-01T00:00:01.650000Z", <<  0,   0,   0,   1, 65>>},
        {"2038-01-19T03:14:07.120000Z", <<127, 255, 255, 255, 12>>}]).
 
 timestamp2_3_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(timestamp2, ignored, 3))),
+      t(into_rfc3339(msmp_binlog_field:decode(timestamp2, ignored, 3))),
       [{"1970-01-01T00:00:01.654000Z", <<  0,   0,   0,   1, 25, 140>>},
        {"2038-01-19T03:14:07.123000Z", <<127, 255, 255, 255,  4, 206>>}]).
 
 timestamp2_4_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(timestamp2, ignored, 4))),
+      t(into_rfc3339(msmp_binlog_field:decode(timestamp2, ignored, 4))),
       [{"1970-01-01T00:00:01.654300Z", <<  0,   0,   0,   1, 25, 143>>},
        {"2038-01-19T03:14:07.123400Z", <<127, 255, 255, 255,  4, 210>>}]).
 
 timestamp2_5_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(timestamp2, ignored, 5))),
+      t(into_rfc3339(msmp_binlog_field:decode(timestamp2, ignored, 5))),
       [{"1970-01-01T00:00:01.654320Z", <<  0,   0,   0,   1, 9, 251, 240>>},
        {"2038-01-19T03:14:07.123450Z", <<127, 255, 255, 255, 1, 226,  58>>}]).
 
 timestamp2_6_test_() ->
     lists:map(
-      t(into_rfc3339(msmp_field:decode(timestamp2, ignored, 6))),
+      t(into_rfc3339(msmp_binlog_field:decode(timestamp2, ignored, 6))),
       [{"1970-01-01T00:00:01.654321Z", <<  0,   0,   0,   1, 9, 251, 241>>},
        {"2038-01-19T03:14:07.499999Z", <<127, 255, 255, 255, 7, 161,  31>>}]).
 
 
 time2_0_test_() ->
     lists:map(
-      t(msmp_field:decode(time2, ignored, 0)),
+      t(msmp_binlog_field:decode(time2, ignored, 0)),
       [{{-838, 59, 59}, << 75, 145,   5>>},
        {{ 838, 59, 59}, <<180, 110, 251>>}]).
 
 time2_1_test_() ->
     lists:map(
-      t(msmp_field:decode(time2, ignored, 1)),
+      t(msmp_binlog_field:decode(time2, ignored, 1)),
       [{{-838, 59, 58.6}, << 75, 145,   5, 196>>},
        {{ 838, 59, 58.1}, <<180, 110, 250,  10>>}]).
 
 time2_2_test_() ->
     lists:map(
-      t(msmp_field:decode(time2, ignored, 2)),
+      t(msmp_binlog_field:decode(time2, ignored, 2)),
       [{{-838, 59, 58.65}, << 75, 145,   5, 191>>},
        {{ 838, 59, 58.12}, <<180, 110, 250,  12>>}]).
 
 time2_3_test_() ->
     lists:map(
-      t(msmp_field:decode(time2, ignored, 3)),
+      t(msmp_binlog_field:decode(time2, ignored, 3)),
       [{{-838, 59, 58.654}, << 75, 145,   5, 230, 116>>},
        {{ 838, 59, 58.123}, <<180, 110, 250,   4, 206>>}]).
 
 time2_4_test_() ->
     lists:map(
-      t(msmp_field:decode(time2, ignored, 4)),
+      t(msmp_binlog_field:decode(time2, ignored, 4)),
       [{{-838, 59, 58.6543}, << 75, 145,   5, 230, 113>>},
        {{ 838, 59, 58.1234}, <<180, 110, 250,   4, 210>>}]).
 
 time2_5_test_() ->
     lists:map(
-      t(msmp_field:decode(time2, ignored, 5)),
+      t(msmp_binlog_field:decode(time2, ignored, 5)),
       [{{-838, 59, 58.65432}, << 75, 145,   5, 246,   4, 16>>},
        {{ 838, 59, 58.12345}, <<180, 110, 250,   1, 226, 58>>}]).
 
 time2_6_test_() ->
     lists:map(
-      t(msmp_field:decode(time2, ignored, 6)),
+      t(msmp_binlog_field:decode(time2, ignored, 6)),
       [{{-838, 59, 59.00000}, << 75, 145,   5, 0, 0, 0>>},
        {{ 838, 59, 59.00000}, <<180, 110, 251, 0, 0, 0>>}]).
 
 
 year_test_() ->
     lists:map(
-      t(msmp_field:decode(year, ignored, ignored)),
+      t(msmp_binlog_field:decode(year, ignored, ignored)),
       [{1901, <<  1>>},
        {2155, <<255>>},
        {0000, <<  0>>}]).
 
 varchar_1_byte_length_test_() ->
     lists:map(
-      t(msmp_field:decode(varchar, ignored, 255)),
+      t(msmp_binlog_field:decode(varchar, ignored, 255)),
       [{<<"a">>, <<1, 97>>},
        {<<"abcde">>, <<5, "abcde">>},
        {iolist_to_binary(lists:duplicate(51, "abcde")),
@@ -183,7 +183,7 @@ varchar_1_byte_length_test_() ->
 
 varchar_2_byte_length_test_() ->
     lists:map(
-      t(msmp_field:decode(varchar, ignored, 8_192)),
+      t(msmp_binlog_field:decode(varchar, ignored, 8_192)),
       [{<<"a">>, <<1, 0, 97>>},
        {<<"abcde">>, <<5, 0, "abcde">>},
        {iolist_to_binary(lists:duplicate(51, "abcde")),
@@ -232,7 +232,7 @@ varchar_2_byte_length_test_() ->
 %% 211,123,13,114>>
 float_test_() ->
     lists:map(
-      t(msmp_field:decode(float, ignored, ignored)),
+      t(msmp_binlog_field:decode(float, ignored, ignored)),
       [{-999.99, << 92, 255, 121, 196>>},
        {   0.00, <<  0,   0,   0,   0>>},
        { 999.99, << 92, 255, 121,  68>>}]).
@@ -256,7 +256,7 @@ float_test_() ->
 %% 253,19,188,230>>
 double_test_() ->
     lists:map(
-      t(msmp_field:decode(double, ignored, ignored)),
+      t(msmp_binlog_field:decode(double, ignored, ignored)),
       [{-999.99, << 82, 184,  30, 133, 235,  63, 143, 192>>},
        {   0.00, <<  0,   0,   0,   0,   0,   0,   0,   0>>},
        { 999.99, << 82, 184,  30, 133, 235,  63, 143,  64>>}]).
@@ -279,7 +279,7 @@ double_test_() ->
 %% 38,177,221,205>>
 bit_test_() ->
     lists:map(
-      t(msmp_field:decode(bit, ignored, 6)),
+      t(msmp_binlog_field:decode(bit, ignored, 6)),
       [{<< 5:6>>, <<  5>>},
        {<< 0:6>>, <<  0>>},
        {<< 7:6>>, <<  7>>},
@@ -335,7 +335,7 @@ bit_test_() ->
 %%             {iolist_to_binary(io_lib:fwrite("~p", [Test])),
 %%              ?_assertEqual(
 %%                 Expected,
-%%                 case (msmp_field:decode(
+%%                 case (msmp_binlog_field:decode(
 %%                         newdecimal,
 %%                         ignored,
 %%                         #{scale => Scale, precision => Precision}))(Input) of

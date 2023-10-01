@@ -13,10 +13,19 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 
-{#{packet => #{action => query_column_count,
-               column_count => 1},
-   sequence => 1},
+{#{packet => #{action => text_resultset_row,
+               row => [<<"4">>, <<"2023-09-06 11:19:48">>]},
+   sequence => 4},
+ <<22,0,0,
+   4,
+   1,52,
+   19,50,48,50,51,45,48,57,45,48,54,32,49,49,58,49,57,58,52,56>>}.
 
- <<1,0,0,
-   1,
-   1>>}.
+{#{packet => #{action => text_resultset_row,
+               row => [<<"3">>, null, <<"6">>]},
+   sequence => 7},
+ <<5,0,0,
+   7,
+   1,51,
+   251,
+   1,54>>}.

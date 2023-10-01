@@ -53,3 +53,5 @@ dep_scran = git https://github.com/shortishly/scran.git
 
 
 include $(if $(ERLANG_MK_FILENAME),$(ERLANG_MK_FILENAME),erlang.mk)
+
+app:: rebar.config

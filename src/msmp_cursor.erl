@@ -13,28 +13,29 @@
 %% limitations under the License.
 
 
--module(msmp_text_resultset).
+-module(msmp_cursor).
 
 
--feature(maybe_expr, enable).
+-export([lookup/1]).
+-export([types/0]).
+-export_type([type/0]).
+-on_load(on_load/0).
+
+-type type() :: no_cursor
+              | read_only
+              | for_update
+              | scrollable.
 
 
--export([decode/0]).
--include_lib("kernel/include/logger.hrl").
+on_load() ->
+    persistent_term:put(
+      ?MODULE,
+      msmp_enum:priv_consult("cursor.terms")).
 
 
-decode() ->
-    fun
-        (Encoded) ->
-            (scran_result:into_map(
-               scran_sequence:sequence(
-                 [scran_result:kv(
-                    row,
-                    scran_multi:many1(msmp_string_length_encoded:decode())),
+types() ->
+    persistent_term:get(?MODULE).
 
-                  scran_result:kv(
-                    action,
-                    scran_combinator:value(
-                      text_resultset,
-                      scran_combinator:eof()))])))(Encoded)
-    end.
+
+lookup(Type) ->
+    maps:get(Type, types()).

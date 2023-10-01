@@ -13,7 +13,7 @@
 %% limitations under the License.
 
 
--module(msmp_query_column_definition_tests).
+-module(msmp_column_definition_tests).
 
 
 -import(msmp_tests, [t/2]).
@@ -22,5 +22,5 @@
 
 decode_test_() ->
     t(msmp_codec:decode(
-        msmp_query_column_definition:decode()),
-      "test/query-column-definition.terms").
+        msmp_column_definition:decode()),
+      "test/column-definition.terms").

@@ -13,7 +13,7 @@
 %% limitations under the License.
 
 
--module(msmp_text_resultset_tests).
+-module(msmp_column_count_tests).
 
 
 -import(msmp_tests, [t/2]).
@@ -21,5 +21,5 @@
 
 
 decode_test_() ->
-    t(msmp_codec:decode(msmp_text_resultset:decode()),
-      "test/text-resultset.terms").
+      t(msmp_codec:decode(msmp_column_count:decode()),
+        "test/column-count.terms").

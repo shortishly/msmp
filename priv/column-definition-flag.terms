@@ -1,0 +1,33 @@
+%% -*- mode: erlang -*-
+%% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+
+
+{not_null, 1}.
+{primary_key, 2}.
+{unique_key, 4}.
+{multiple_key, 8}.
+{blob, 16}.
+{unsigned, 32}.
+{zerofill, 64}.
+{binary, 128}.
+{enum, 256}.
+{auto_increment, 512}.
+{timestamp, 1_024}.
+{set, 2_048}.
+{no_default_value, 4_096}.
+{on_update_now, 8_192}.
+{part_key, 16_384}.
+{group, 32_768}.
+{unique, 65_536}.

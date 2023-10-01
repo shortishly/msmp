@@ -13,22 +13,39 @@
 %% limitations under the License.
 
 
--module(msmp_query_column_count).
+-module(msmp_com_stmt_prepare).
 
 
--export([decode/0]).
+-export([decode/1]).
+-export([encode/1]).
 
 
-decode() ->
+decode(_ClientFlags) ->
     fun
         (Encoded) ->
             (scran_result:into_map(
                scran_sequence:sequence(
-                 [scran_result:kv(column_count, msmp_integer_variable:decode()),
-
-                  scran_result:kv(
+                 [scran_result:kv(
                     action,
                     scran_combinator:value(
-                      query_column_count,
-                      scran_combinator:eof()))])))(Encoded)
+                      com_stmt_prepare,
+                      scran_bytes:tag(command()))),
+                  scran_result:kv(
+                    query,
+                    scran_combinator:rest())])))(Encoded)
     end.
+
+
+encode(_ClientFlags) ->
+    fun
+        (Decoded) ->
+            (narcs_sequence:sequence(
+               [narcs_bytes:tag(command()),
+                narcs_combinator:v(
+                  query,
+                  narcs_combinator:rest())]))(Decoded)
+    end.
+
+
+command() ->
+    <<16#16>>.

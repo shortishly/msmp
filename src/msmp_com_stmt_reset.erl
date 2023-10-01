@@ -13,13 +13,22 @@
 %% limitations under the License.
 
 
--module(msmp_query_column_count_tests).
+-module(msmp_com_stmt_reset).
 
 
--import(msmp_tests, [t/2]).
--include_lib("eunit/include/eunit.hrl").
+-export([encode/1]).
 
 
-decode_test_() ->
-      t(msmp_codec:decode(msmp_query_column_count:decode()),
-        "test/query-column-count.terms").
+command() ->
+    <<16#1a>>.
+
+
+encode(_ClientFlags) ->
+    fun
+        (Decoded) ->
+            (narcs_sequence:sequence(
+               [narcs_bytes:tag(command()),
+                narcs_combinator:v(
+                  statement_id,
+                  msmp_integer_fixed:encode(4))]))(Decoded)
+    end.

@@ -13,7 +13,7 @@
 %% limitations under the License.
 
 
--module(msmp_query_column_definition).
+-module(msmp_column_definition).
 
 
 -feature(maybe_expr, enable).
@@ -64,7 +64,9 @@ decode() ->
                         fun msmp_field:lookup/1)),
                     scran_result:kv(
                       flags,
-                      msmp_integer_fixed:decode(2)),
+                      scran_combinator:map_result(
+                        msmp_integer_fixed:decode(2),
+                        fun msmp_column_definition_flags:decode/1)),
                     scran_result:kv(
                       decimals,
                       msmp_integer_fixed:decode(1)),
@@ -74,6 +76,6 @@ decode() ->
                     scran_result:kv(
                       action,
                       scran_combinator:value(
-                        query_column_definition,
+                        column_definition,
                         scran_combinator:eof()))])))(Input)
     end.

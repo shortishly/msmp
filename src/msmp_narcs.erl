@@ -1,4 +1,3 @@
-%% -*- mode: erlang -*-
 %% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +12,22 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 
-{#{packet => #{action => text_resultset,
-               row => [<<"4">>, <<"2023-09-06 11:19:48">>]},
-   sequence => 4},
- <<22,0,0,
-   4,
-   1,52,
-   19,50,48,50,51,45,48,57,45,48,54,32,49,49,58,49,57,58,52,56>>}.
+
+-module(msmp_narcs).
+
+
+-export([many0/1]).
+-export([sequence/1]).
+
+
+sequence(Steps) ->
+    fun
+        (Decoded) ->
+            [Step(Decoded) || Step <- Steps]
+    end.
+
+many0(Encoder) ->
+    fun
+        (Items) ->
+            [Encoder(Item) || Item <- Items]
+    end.

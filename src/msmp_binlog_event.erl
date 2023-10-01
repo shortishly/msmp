@@ -13,6 +13,9 @@
 %% limitations under the License.
 
 
+%% @doc Replication protocol events
+
+
 -module(msmp_binlog_event).
 
 
@@ -48,6 +51,7 @@
 -import(scran_sequence, [sequence/1]).
 -include_lib("kernel/include/logger.hrl").
 -on_load(on_load/0).
+
 
 on_load() ->
     persistent_term:put(
@@ -452,10 +456,58 @@ event(Arg, #{event_type := stop} = Header) ->
                  [ignore(scran_combinator:eof())])))(Input)
     end;
 
-event(Arg, Header) ->
-    ?LOG_WARNING(#{arg => Arg, header => Header}),
+event(Arg, #{event_type := previous_gtids_log} = Header) ->
     fun
         (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               scran_sequence:sequence(
+                 [kv(gtids, scran_multi:many1(scran_bytes:take(8)))])))(Input)
+    end;
+
+event(Arg, #{event_type := anonymous_gtid_log} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               sequence(
+                 [kv(data, rest())])))(Input)
+    end;
+
+event(Arg, #{event_type := heartbeat} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               sequence(
+                 [kv(unknown, scran_bytes:take(1)),
+                  kv(log_ident, msmp_string_length_encoded:decode()),
+                  kv(data, rest())])))(Input)
+    end;
+
+event(Arg, #{event_type := annotate_rows} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               sequence(
+                 [kv(annotation, rest())])))(Input)
+    end;
+
+event(Arg, Header) ->
+    fun
+        (Input) ->
+            ?LOG_WARNING(#{arg => Arg,
+                           input => Input,
+                           header => Header}),
             (into_map(
                sequence(
                  [kv(body, rest())])))(Input)
@@ -582,7 +634,7 @@ row(#{coltypes := ColTypes,
                                              success(null);
 
                                          false ->
-                                             msmp_field:decode(
+                                             msmp_binlog_field:decode(
                                                ColType,
                                                maps:get(ColNo, Unsignedness, false),
                                                maps:get(ColNo, FieldMetadata, undefined))
@@ -600,7 +652,7 @@ bitmap(N) ->
 
 
 bitmap_bytes(N) ->
-    (N + 7) div 8.
+    msmp_binary:null_bitmap_bytes(N, 0).
 
 
 uncompress() ->

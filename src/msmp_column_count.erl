@@ -13,7 +13,7 @@
 %% limitations under the License.
 
 
--module(msmp_text_resultset_row).
+-module(msmp_column_count).
 
 
 -export([decode/0]).
@@ -24,18 +24,11 @@ decode() ->
         (Encoded) ->
             (scran_result:into_map(
                scran_sequence:sequence(
-                 [scran_result:kv(
-                    row,
-                    scran_multi:many1(
-                      scran_branch:alt(
-                        [scran_combinator:value(
-                           null,
-                           scran_bytes:tag(<<16#fb>>)),
-                         msmp_string_length_encoded:decode()]))),
+                 [scran_result:kv(column_count, msmp_integer_variable:decode()),
 
                   scran_result:kv(
                     action,
                     scran_combinator:value(
-                      text_resultset_row,
+                      column_count,
                       scran_combinator:eof()))])))(Encoded)
     end.
