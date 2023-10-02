@@ -35,6 +35,9 @@
 
 decode() ->
     fun
+        (<<>>) ->
+            {<<>>, #{}};
+
         (Input) ->
             (variables(
                alt([flags2(),

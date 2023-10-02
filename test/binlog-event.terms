@@ -253,10 +253,91 @@
                           sql => <<"BEGIN">>},
                footer => <<"CLóÞ">>},
    sequence => 72}},
-<<82,0,0,72,0,177,253,221,100,2,100,0,0,0,81,0,0,0,207,108,53,0,8,0,28,
+<<82,0,0,
+  72,
+  0,
+  177,253,221,100,  % timestamp
+  2,                % event type
+  100,0,0,0,        % server id
+  81,0,0,0,         % event size
+  207,108,53,0,     % log position
+  8,0,              % flags
+  28,
   0,0,0,0,0,0,0,10,0,0,29,0,0,0,0,0,0,1,32,0,160,69,0,0,0,0,6,3,115,116,
   100,4,8,0,8,0,255,0,18,255,0,115,104,111,114,116,105,115,104,108,121,
   0,66,69,71,73,78,67,76,243,222>>}.
+
+{#{packet => #{header => #{flags => 8,
+                           timestamp => 1696166500,
+                           event_type => query,
+                           server_id => 100,
+                           event_size => 42,
+                           log_pos => 363},
+               action => log_event,
+               event => #{schema => <<>>,
+                          error_code => 0,
+                          slave_proxy_id => 0,
+                          execution_time => 0,
+                          schema_length => 0,
+                          status_vars => #{},
+                          sql => <<"# Dum">>},
+               footer => <<"1~ÄÌ">>},
+   sequence => 5},
+ <<43,0,0,
+   5,
+   0,
+   100,114,25,101,  % timestamp
+   2,               % event type
+   100,0,0,0,       % server id
+   42, 0,0,0,       % event size
+   107,1,0,0,       % log position
+   8,0,             % flags
+   0,0,0,0,         % slave proxy id
+   0,0,0,0,         % execution time
+   0,               % schema length
+   0,0,             % error code
+   0,0,             % status vars
+   0,               % schema
+   35,32,68,117,109,
+   49,126,196,204>>}.
+
+{#{packet => #{header => #{flags => 8,
+                           timestamp => 1696166501,
+                           event_type => query,
+                           server_id => 100,
+                           event_size => 42,
+                           log_pos => 504},
+               action => log_event,
+               event => #{schema => <<>>,
+                          error_code => 0,
+                          slave_proxy_id => 0,
+                          execution_time => 0,
+                          schema_length => 0,
+                          status_vars => #{},
+                          sql => <<"# Dum">>},
+               footer => <<93,35,156,129>>},
+   sequence => 7},
+ <<43,0,0,7,0,101,114,25,101,2,100,0,0,0,42,0,0,0,248,1,0,0,8,0,0,
+   0,0,0,0,0,0,0,0,0,0,0,0,0,35,32,68,117,109,93,35,156,129>>}.
+
+{#{packet => #{header => #{flags => 8,
+                           timestamp => 1696166501,
+                           event_type => query,
+                           server_id => 100,
+                           event_size => 42,
+                           log_pos => 1097},
+               action => log_event,
+               event => #{schema => <<>>,
+                          error_code => 0,
+                          slave_proxy_id => 0,
+                          execution_time => 0,
+                          schema_length => 0,
+                          status_vars => #{},
+                          sql => <<"BEGIN">>},
+               footer => <<"2ÿ_ò">>},
+   sequence => 13},
+ <<43,0,0,13,0,101,114,25,101,2,100,0,0,0,42,0,0,0,73,4,0,0,8,0,0,
+   0,0,0,0,0,0,0,0,0,0,0,0,0,66,69,71,73,78,50,255,95,242>>}.
 
 
 {#{packet => #{header => #{flags => 0,

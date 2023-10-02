@@ -13,6 +13,8 @@
 %% limitations under the License.
 
 
+%% @doc Replication protocol support for decoding of fields
+
 -module(msmp_binlog_field).
 
 
@@ -21,6 +23,8 @@
 -import(scran_combinator, [map_result/2]).
 -import(scran_combinator, [rest/0]).
 -include_lib("kernel/include/logger.hrl").
+
+
 decode(long, Unsigned, _Metadata) ->
     fun
         (Input) ->
