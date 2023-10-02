@@ -502,6 +502,24 @@ event(Arg, #{event_type := annotate_rows} = Header) ->
                  [kv(annotation, rest())])))(Input)
     end;
 
+event(Arg, #{event_type := user_var} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               sequence(
+                 [kv(name,
+                     scran_bytes:length_encoded(
+                       msmp_integer_fixed:decode(4))),
+                  kv(value,
+                     scran_branch:alt(
+                       [scran_combinator:value(
+                          null,
+                          scran_bytes:tag(<<1>>))]))])))(Input)
+    end;
+
 event(Arg, Header) ->
     fun
         (Input) ->
