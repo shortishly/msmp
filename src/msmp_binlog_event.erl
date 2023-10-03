@@ -618,7 +618,8 @@ rows(Mapping) ->
 
 row(#{coltypes := ColTypes,
       field_metadata := FieldMetadata,
-      metadata := #{unsignedness := Unsignedness}} = Mapping) ->
+      metadata := Metadata} = Mapping) ->
+    Unsignedness = maps:get(unsignedness, Metadata, #{}),
     fun
         (Input) ->
             ?LOG_DEBUG(#{mapping => Mapping, input => Input}),

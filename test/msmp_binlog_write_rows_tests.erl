@@ -17,6 +17,7 @@
 
 
 -import(msmp_tests, [t/1]).
+-import(msmp_tests, [t/2]).
 -include_lib("eunit/include/eunit.hrl").
 
 
@@ -1012,3 +1013,36 @@ t0019_test_() ->
               0,0,0,0,1,0,2,255,129,50,120,156,251,195,200,0,1,140,127,152,160,44,
               166,63,204,80,22,243,31,22,40,139,229,15,43,148,197,10,0,150,0,5,11,
               166,11,202,105>>}]).
+
+
+world_cup_teams_2022_test_() ->
+    Mapped = #{118 => #{flags => 1,
+                        table => <<"world_cup_teams_2022">>,
+                        metadata => #{simple_primary_key => [0],
+                                      column_name => [<<"country">>,
+                                                      <<"top_searched">>,
+                                                      <<"second">>,
+                                                      <<"third">>,
+                                                      <<"fourth">>,
+                                                      <<"fifth">>],
+                                      default_charset => "ÿ",
+                                      column_visibility => <<"ü">>},
+                        table_id => 118,
+                        database => <<"shortishly">>,
+                        field_metadata => #{1 => 200,
+                                            2 => 2,
+                                            3 => 2,
+                                            4 => 2,
+                                            5 => 2,
+                                            6 => 2},
+                        coltypes => [varchar,
+                                     blob,
+                                     blob,
+                                     blob,
+                                     blob,
+                                     blob],
+                        null_bitmap => <<">">>}},
+    t(msmp_codec:decode(
+        msmp_binlog_network_stream:decode(
+          #{mapped => Mapped})),
+      "test/write-rows-world-cup-teams-2022.terms").
