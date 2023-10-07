@@ -43,13 +43,9 @@ SHELL_OPTS += -enable-feature maybe_expr
 SHELL_OPTS += -s sync
 
 
-dep_narcs = git https://github.com/shortishly/narcs.git
-dep_phrase = git https://github.com/shortishly/phrase.git
-dep_scran = git https://github.com/shortishly/scran.git
-
-# dep_narcs = ln ../../narcs
-# dep_phrase = ln ../../phrase
-# dep_scran = ln ../../scran
+dep_narcs = $(if $(DEP_LN),ln ../../narcs,git https://github.com/shortishly/narcs.git)
+dep_phrase = $(if $(DEP_LN),ln ../../phrase,git https://github.com/shortishly/phrase.git)
+dep_scran = $(if $(DEP_LN),ln ../../scran,git https://github.com/shortishly/scran.git)
 
 
 include $(if $(ERLANG_MK_FILENAME),$(ERLANG_MK_FILENAME),erlang.mk)
