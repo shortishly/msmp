@@ -17,16 +17,6 @@
 
 
 -export([decode/0]).
--import(scran_branch, [alt/1]).
--import(scran_bytes, [null_terminated/0]).
--import(scran_bytes, [tag/1]).
--import(scran_bytes, [take/1]).
--import(scran_combinator, [value/2]).
--import(scran_result, [into_atom/1]).
--import(scran_result, [into_map/1]).
--import(scran_result, [kv/2]).
--import(scran_sequence, [combined_with/2]).
--import(scran_sequence, [sequence/1]).
 
 
 -spec decode() -> scran:parser(binary(), msmp:handshake()).
@@ -34,34 +24,88 @@
 decode() ->
     fun
         (Input) ->
-            (combined_with(
-               into_map(
-                 sequence(
-                   [kv(action, value(handshake, tag(<<10:8>>))),
-                    kv(server_version, null_terminated()),
-                    kv(thread_id, msmp_integer_fixed:decode(4)),
-                    kv(auth_plugin_data_part_1, take(8)),
-                    kv(filler, msmp_integer_fixed:decode(1)),
-                    kv(capability_flags_1, msmp_capabilities:decode(lower)),
-                    kv(character_set, msmp_integer_fixed:decode(1)),
-                    kv(status_flags, msmp_integer_fixed:decode(2)),
-                    kv(capability_flags_2, msmp_capabilities:decode(upper)),
-                    kv(auth_plugin_data_len, msmp_integer_fixed:decode(1)),
-                    alt([sequence(
-                           [kv(reserved, tag(<<0:10/unit:8>>))]),
+            (scran_sequence:combined_with(
+               scran_result:into_map(
+                 scran_sequence:sequence(
+                   [scran_result:kv(
+                      action,
+                      scran_combinator:value(
+                        handshake,
+                        scran_bytes:tag(<<10:8>>))),
 
-                         sequence(
-                           [kv(reserved, tag(<<0:6/unit:8>>)),
-                            kv(extended_capabilities,
-                               msmp_integer_fixed:decode(4))])])])),
+                    scran_result:kv(
+                      server_version,
+                      scran_bytes:null_terminated()),
+
+                    scran_result:kv(
+                      thread_id,
+                      msmp_integer_fixed:decode(4)),
+
+                    scran_result:kv(
+                      auth_plugin_data_part_1,
+                      scran_bytes:take(8)),
+
+                    scran_result:kv(
+                      filler,
+                      msmp_integer_fixed:decode(1)),
+
+                    scran_result:kv(
+                      capability_flags_1,
+                      msmp_capabilities:decode(lower)),
+
+                    scran_result:kv(
+                      character_set,
+                      msmp_integer_fixed:decode(1)),
+
+                    scran_result:kv(
+                      status_flags,
+                      msmp_integer_fixed:decode(2)),
+
+                    scran_result:kv(
+                      capability_flags_2,
+                      msmp_capabilities:decode(upper)),
+
+                    scran_result:kv(
+                      auth_plugin_data_len,
+                      msmp_integer_fixed:decode(1)),
+
+                    %% Determine whether we are connected to MySQL or
+                    %% MariaDB
+                    %%
+                    scran_branch:alt(
+                      [scran_sequence:sequence(
+                         [scran_result:kv(
+                            reserved,
+                            scran_bytes:tag(<<0:10/unit:8>>)),
+
+                         scran_result:kv(
+                           operator,
+                          scran_combinator:success(mysql))]),
+
+                       scran_sequence:sequence(
+                         [scran_result:kv(
+                            reserved,
+                            scran_bytes:tag(<<0:6/unit:8>>)),
+
+                          scran_result:kv(
+                            extended_capabilities,
+                            msmp_integer_fixed:decode(4)),
+
+                          scran_result:kv(
+                            operator,
+                            scran_combinator:success(mariadb))])])])),
                fun
                    (#{capability_flags_2 := #{plugin_auth := true},
                       auth_plugin_data_len := AuthPluginDataLen}) ->
-                       into_map(
-                         sequence(
-                           [kv(auth_plugin_data_part_2,
-                               take(max(13, AuthPluginDataLen - 8))),
-                            kv(auth_plugin_name,
-                               into_atom(null_terminated()))]))
+                       scran_result:into_map(
+                         scran_sequence:sequence(
+                           [scran_result:kv(
+                              auth_plugin_data_part_2,
+                              scran_bytes:take(max(13, AuthPluginDataLen - 8))),
+
+                            scran_result:kv(
+                              auth_plugin_name,
+                              scran_result:into_atom(
+                                scran_bytes:null_terminated()))]))
                end))(Input)
     end.
