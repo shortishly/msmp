@@ -45,6 +45,8 @@ decode() ->
                     catalog_nz(),
                     charset(),
 
+                    table_map_for_update(),
+
                     ddl_xid(),
                     default_collation_for_utf8mb4(),
 
@@ -85,6 +87,12 @@ catalog_nz() ->
 
 
 ddl_xid() ->
+    fun
+        (Input) ->
+            (variable(?FUNCTION_NAME, msmp_integer_fixed:decode(8)))(Input)
+    end.
+
+table_map_for_update() ->
     fun
         (Input) ->
             (variable(?FUNCTION_NAME, msmp_integer_fixed:decode(8)))(Input)
