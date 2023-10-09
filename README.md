@@ -33,6 +33,10 @@ This section covers the binlog protocol used by
 [MySQL][mysql-replication-protocol] and
 [MariaDB][mariadb-replication-protocol] for binary replication.
 
+- [msmp\_binlog\_dump\_gtid](src/msmp_binlog_dump_gtid.erl)
+- [msmp\_binlog\_dump](src/msmp_binlog_dump.erl)
+- [msmp\_register\_replica](src/msmp_register_replica.erl)
+
 The following binlog events are supported for binary replication via
 [msmp\_binlog\_event](src/msmp_binlog_event.erl).
 

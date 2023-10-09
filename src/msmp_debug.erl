@@ -68,6 +68,7 @@ parser(BinLog, ClientFlags) ->
         (Input) ->
             (alt([msmp_binlog_network_stream:decode(BinLog),
                   msmp_binlog_dump:decode(),
+                  msmp_binlog_dump_gtid:decode(),
                   msmp_handshake:decode(),
                   msmp_handshake_response:decode(),
                   msmp_packet_ok:decode(ClientFlags),

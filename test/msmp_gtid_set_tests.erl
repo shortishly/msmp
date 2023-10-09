@@ -13,29 +13,27 @@
 %% limitations under the License.
 
 
--module(msmp_binlog).
+-module(msmp_gtid_set_tests).
 
 
--feature(maybe_expr, enable).
+-include_lib("eunit/include/eunit.hrl").
+-import(msmp_tests, [t/2]).
 
 
--export([decode/0]).
--import(scran_bytes, [tag/1]).
--import(scran_multi, [many1/1]).
--import(scran_sequence, [preceded/2]).
+decode_test_() ->
+    t(msmp_gtid_set:decode(), tests()).
 
 
-decode() ->
-    fun
-        (Input) ->
-            (preceded(
-               header(),
-               many1(msmp_binlog_event:decode())))(Input)
-    end.
+encode_test_() ->
+    lists:map(
+      fun
+          ({Decoded, Encoded}) ->
+              ?_assertEqual(
+                 Encoded,
+                 (narcs_result:to_binary(msmp_gtid_set:encode()))(Decoded))
+      end,
+      phrase_file:consult(tests())).
 
 
-header() ->
-    fun
-        (Input) ->
-            (tag(<<16#fe, "bin">>))(Input)
-    end.
+tests() ->
+    "test/gtid-set.terms".

@@ -1,0 +1,58 @@
+%% -*- mode: erlang -*-
+%% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+
+{#{packet => #{flags => 2,
+               name => <<>>,
+               position => 4,
+               action => binlog_dump_gtid,
+               server_id => 200,
+               gtids => [#{sid => <<174,112,89,112,101,216,17,238,152,156,2,66,
+                                    172,27,0,3>>,
+                           intervals => [#{start => 1,finish => 6}]}]},
+   sequence => 0},
+ <<71,0,0,
+   0,                  % sequence
+   30,                 % binlog dump gtid
+   2,0,                % flags
+   200,0,0,0,          % server id
+   0,0,0,0,            % name size
+   4,0,0,0,0,0,0,0,    % pos
+   48,0,0,0,           % data size
+   1,0,0,0,0,0,0,0,    % n_sids
+   174,112,89,112,101,216,17,238,152,156,2,66,172,27,0,3,
+   1,0,0,0,0,0,0,0,    % n_intervals
+   1,0,0,0,0,0,0,0,
+   6,0,0,0,0,0,0,0>>}.
+
+{#{packet => #{flags => 2,
+               name => <<>>,
+               position => 4,
+               action => binlog_dump_gtid,
+               server_id => 200,
+               gtids => [#{sid => <<174,107,123,240,101,216,17,238,179,74,2,66,
+                                    172,27,0,2>>,
+                           intervals => [#{start => 1,
+                                           finish => 147}]},
+
+                         #{sid => <<174,112,89,112,101,216,17,238,152,156,2,66,
+                                    172,27,0,3>>,
+                           intervals => [#{start => 1,
+                                           finish => 6}]}]},
+   sequence => 0},
+ <<111,0,0,0,30,2,0,200,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,88,0,0,0,2,0,0,0,0,
+   0,0,0,174,107,123,240,101,216,17,238,179,74,2,66,172,27,0,2,1,0,0,0,0,
+   0,0,0,1,0,0,0,0,0,0,0,147,0,0,0,0,0,0,0,174,112,89,112,101,216,17,238,
+   152,156,2,66,172,27,0,3,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,6,0,0,0,0,0,0,
+   0>>}.

@@ -1,3 +1,4 @@
+%% -*- mode: erlang -*-
 %% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,29 +14,21 @@
 %% limitations under the License.
 
 
--module(msmp_binlog).
+{[#{sid => <<174,112,89,112,101,216,17,238,152,156,2,66,172,27,0,3>>,
+    intervals => [#{start => 1, finish => 6}]}],
 
+ <<1,0,0,0,0,0,0,0,
+   174,112,89,112,101,216,17,238,152,156,2,66,172,27,0,3,
+   1,0,0,0,0,0,0,0,
+   1,0,0,0,0,0,0,0,
+   6,0,0,0,0,0,0,0>>}.
 
--feature(maybe_expr, enable).
+{[], <<0,0,0,0,0,0,0,0>>}.
 
-
--export([decode/0]).
--import(scran_bytes, [tag/1]).
--import(scran_multi, [many1/1]).
--import(scran_sequence, [preceded/2]).
-
-
-decode() ->
-    fun
-        (Input) ->
-            (preceded(
-               header(),
-               many1(msmp_binlog_event:decode())))(Input)
-    end.
-
-
-header() ->
-    fun
-        (Input) ->
-            (tag(<<16#fe, "bin">>))(Input)
-    end.
+{[#{sid => <<174,107,123,240,101,216,17,238,179,74,2,66,172,27,0,2>>,
+    intervals => [#{start => 1,finish => 147}]}],
+ <<1,0,0,0,0,0,0,0,
+   174,107,123,240,101,216,17,238,179,74,2,66,172,27,0,2,
+   1,0,0,0,0,0,0,0,
+   1,0,0,0,0,0,0,0,
+   147,0,0,0,0,0,0,0>>}.

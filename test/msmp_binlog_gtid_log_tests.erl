@@ -13,29 +13,15 @@
 %% limitations under the License.
 
 
--module(msmp_binlog).
+-module(msmp_binlog_gtid_log_tests).
 
 
--feature(maybe_expr, enable).
+-import(msmp_tests, [t/2]).
+-include_lib("eunit/include/eunit.hrl").
 
 
--export([decode/0]).
--import(scran_bytes, [tag/1]).
--import(scran_multi, [many1/1]).
--import(scran_sequence, [preceded/2]).
-
-
-decode() ->
-    fun
-        (Input) ->
-            (preceded(
-               header(),
-               many1(msmp_binlog_event:decode())))(Input)
-    end.
-
-
-header() ->
-    fun
-        (Input) ->
-            (tag(<<16#fe, "bin">>))(Input)
-    end.
+decode_test_() ->
+    t(msmp_codec:decode(
+        msmp_binlog_network_stream:decode(
+          #{mapped => #{}})),
+      "test/binlog-gtid-log.terms").

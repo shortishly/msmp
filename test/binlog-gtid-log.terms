@@ -1,0 +1,38 @@
+%% -*- mode: erlang -*-
+%% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%% http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+
+{#{packet => #{header => #{flags => 0,
+                           timestamp => 1696698153,
+                           event_type => gtid_log,
+                           server_id => 100,
+                           event_size => 77,
+                           log_pos => 415},
+               action => log_event,
+               event => #{flags => 1,
+                          server_version => 80100,
+                          sid => <<68,110,217,32,101,51,17,238,140,236,2,66,172,
+                                   25,0,3>>,
+                          gno => 2,
+                          logical_timestamp_typecode => 2,
+                          last_committed => 1,
+                          sequence_number => 2,
+                          transaction_length => 186,
+                          immediate_commit_timestamp => 1696698153370639},
+               footer => <<121,203,173,116>>},
+   sequence => 6},
+ <<78,0,0,6,0,41,143,33,101,33,100,0,0,0,77,0,0,0,159,1,0,0,0,0,1,68,110,
+   217,32,101,51,17,238,140,236,2,66,172,25,0,3,2,0,0,0,0,0,0,0,2,1,0,0,
+   0,0,0,0,0,2,0,0,0,0,0,0,0,15,4,185,82,35,7,6,186,228,56,1,0,121,203,
+   173,116>>}.

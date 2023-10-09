@@ -77,6 +77,9 @@ decode(Arg) ->
                header(Arg),
                fun
                    (#{event_size := EventSize} = Header) ->
+
+                       ?LOG_DEBUG(#{encoded => binary:part(Input, 0, EventSize)}),
+
                        into_map(
                          sequence(
                            [kv(action, success(log_event)),
@@ -86,7 +89,8 @@ decode(Arg) ->
                                  scran_bytes:take(
                                    EventSize - header_size(Arg) - 4),
                                  event(Arg, Header))),
-                            kv(footer, rest())]))
+                            %% kv(footer, rest())]))
+                           kv(footer, scran_bytes:take(4))]))
                end))(Input)
     end.
 
@@ -464,7 +468,7 @@ event(Arg, #{event_type := previous_gtids_log} = Header) ->
                          input => Input}),
             (into_map(
                scran_sequence:sequence(
-                 [kv(gtids, scran_multi:many1(scran_bytes:take(8)))])))(Input)
+                 [kv(gtids, msmp_gtid_set:decode())])))(Input)
     end;
 
 event(Arg, #{event_type := anonymous_gtid_log} = Header) ->
@@ -476,6 +480,25 @@ event(Arg, #{event_type := anonymous_gtid_log} = Header) ->
             (into_map(
                sequence(
                  [kv(data, rest())])))(Input)
+    end;
+
+event(Arg, #{event_type := gtid_log} = Header) ->
+    fun
+        (Input) ->
+            ?LOG_DEBUG(#{arg => Arg,
+                         header => Header,
+                         input => Input}),
+            (into_map(
+               sequence(
+                 [kv(flags, msmp_integer_fixed:decode(1)),
+                  kv(sid, scran_bytes:take(16)),
+                  kv(gno, msmp_integer_fixed:decode(8)),
+                  kv(logical_timestamp_typecode, msmp_integer_fixed:decode(1)),
+                  kv(last_committed, msmp_integer_fixed:decode(8)),
+                  kv(sequence_number, msmp_integer_fixed:decode(8)),
+                  gtid_log_timestamp(),
+                  kv(transaction_length, msmp_integer_fixed:decode(1)),
+                  kv(server_version, msmp_integer_fixed:decode(4))])))(Input)
     end;
 
 event(Arg, #{event_type := heartbeat} = Header) ->
@@ -694,4 +717,26 @@ uncompress() ->
                         nomatch
                 end
             end
+    end.
+
+
+gtid_log_timestamp() ->
+    fun
+        (<<_:55/bits, 1:1, _/bytes>> = Encoded) ->
+            ?LOG_DEBUG(#{encoded => Encoded}),
+            (scran_sequence:sequence(
+               [scran_result:kv(
+                  immediate_commit_timestamp,
+                  msmp_integer_fixed:decode(7)),
+
+                scran_result:kv(
+                  original_timestamp,
+                  msmp_integer_fixed:decode(7))]))(Encoded);
+
+        (<<_:55/bits, 0:1, _/bytes>> = Encoded) ->
+            ?LOG_DEBUG(#{encoded => Encoded}),
+            (scran_sequence:sequence(
+               [scran_result:kv(
+                  immediate_commit_timestamp,
+                  msmp_integer_fixed:decode(7))]))(Encoded)
     end.
