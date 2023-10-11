@@ -79,9 +79,14 @@ decode(string, _, #{field_type := string}) ->
                 msmp_integer_fixed:decode(2)))(Input)
     end;
 
-decode(blob, _, Length) ->
+decode(blob = Type, Unsigned, Length) ->
     fun
         (Input) ->
+            ?LOG_DEBUG(#{type => Type,
+                         unsigned => Unsigned,
+                         length => Length,
+                         input => Input}),
+
             (scran_bytes:length_encoded(
                 msmp_integer_fixed:decode(Length)))(Input)
     end;

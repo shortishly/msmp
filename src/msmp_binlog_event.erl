@@ -27,6 +27,7 @@
 -define(FL_PREPARED_XA, 64).
 -export([decode/0]).
 -export([decode/1]).
+-export([field_metadata/2]).
 -export([rows/1]).
 -import(scran_bits, [into_boolean/0]).
 -import(scran_bytes, [length_encoded/1]).
@@ -71,8 +72,11 @@ decode() ->
 -spec decode(map()) -> scran:parser(binary(), binlog_event()).
 
 decode(Arg) ->
+    ?LOG_DEBUG(#{arg => Arg}),
     fun
         (Input) ->
+            ?LOG_DEBUG(#{input => Input}),
+
             (followed_with(
                header(Arg),
                fun
@@ -556,22 +560,35 @@ event(Arg, Header) ->
 
 
 field_metadata(ColTypes, Data) ->
+    ?LOG_DEBUG(#{col_types => ColTypes, data => Data}),
     ?FUNCTION_NAME(ColTypes, Data, []).
 
-field_metadata([string | ColTypes], <<Meta:16/little, Data/bytes>>, A) when Meta >= 256 ->
+field_metadata([string = ColType | ColTypes], <<Meta:16/little, Data/bytes>>, A) when Meta >= 256 ->
     <<RealType:8, Length:8>> = <<Meta:16/little>>,
+    ?LOG_DEBUG(#{col_type => ColType,
+                 col_types => ColTypes,
+                 meta => Meta,
+                 data => Data}),
     ?FUNCTION_NAME(
        ColTypes,
        Data,
        [#{field_type => msmp_field:lookup(RealType), length => Length} | A]);
 
-field_metadata([string | ColTypes], <<Meta:16/little, Data/bytes>>, A) ->
+field_metadata([string = ColType | ColTypes], <<Meta:16/little, Data/bytes>>, A) ->
+    ?LOG_DEBUG(#{type => ColType,
+                 meta => Meta,
+                 data => Data}),
     ?FUNCTION_NAME(
        ColTypes,
        Data,
        [#{length => Meta} | A]);
 
-field_metadata([newdecimal | ColTypes], <<Precision:8, Scale:8, Data/bytes>>, A) ->
+field_metadata([newdecimal = ColType | ColTypes], <<Precision:8, Scale:8, Data/bytes>>, A) ->
+    ?LOG_DEBUG(#{col_type => ColType,
+                 col_types => ColTypes,
+                 precision => Precision,
+                 scale => Scale,
+                 data => Data}),
     ?FUNCTION_NAME(
        ColTypes,
        Data,
@@ -581,6 +598,10 @@ field_metadata([ColType | ColTypes], <<Meta:16/little, Data/bytes>>, A)
   when ColType == var_string;
        ColType == varchar;
        ColType == bit ->
+    ?LOG_DEBUG(#{col_type => ColType,
+                 col_types => ColTypes,
+                 meta => Meta,
+                 data => Data}),
     ?FUNCTION_NAME(
        ColTypes,
        Data,
@@ -588,18 +609,26 @@ field_metadata([ColType | ColTypes], <<Meta:16/little, Data/bytes>>, A)
 
 field_metadata([ColType | ColTypes], <<Meta:8/little, Data/bytes>>, A)
   when ColType == blob;
+       ColType == float;
        ColType == double;
        ColType == geometry;
        ColType == json;
        ColType == time2;
        ColType == datetime2;
        ColType == timestamp2 ->
+    ?LOG_DEBUG(#{col_type => ColType,
+                 col_types => ColTypes,
+                 meta => Meta,
+                 data => Data}),
     ?FUNCTION_NAME(
        ColTypes,
        Data,
        [Meta | A]);
 
-field_metadata([_ | ColTypes], Data, A) ->
+field_metadata([ColType | ColTypes], Data, A) ->
+    ?LOG_DEBUG(#{col_type => ColType,
+                 col_types => ColTypes,
+                 data => Data}),
     ?FUNCTION_NAME(ColTypes, Data, [undefined | A]);
 
 field_metadata([], <<>>, A) ->
@@ -664,13 +693,15 @@ row(#{coltypes := ColTypes,
 
                fun
                    (Nulls) ->
-                       ?LOG_DEBUG(#{nulls => Nulls}),
+                       ?LOG_DEBUG(#{col_types => ColTypes, nulls => Nulls}),
 
                        into_tuple(
                          sequence(
                            lists:map(
                              fun
                                  ({ColNo, ColType}) ->
+                                     ?LOG_DEBUG(#{col_no => ColNo, col_type => ColType}),
+
                                      case maps:get(ColNo, Nulls, false) of
                                          true ->
                                              success(null);

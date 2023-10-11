@@ -50,3 +50,35 @@ t3_rows_test_() ->
           0,               % row 2
           2,0,0,0,0,0,0,0,
           127,255>>}]).
+
+
+field_metadata_test() ->
+    ?assertEqual(
+       #{1 => 2,
+         2 => 2,
+         3 => 200,
+         4 => 4,
+         5 => 4,
+         6 => 4,
+         7 => 4,
+         8 => 4,
+         9 => 20},
+       msmp_binlog_event:field_metadata(
+         [blob,
+          blob,
+          varchar,
+          float,
+          float,
+          float,
+          float,
+          float,
+          varchar],
+         <<2,
+           2,
+           200,0,
+           4,
+           4,
+           4,
+           4,
+           4,
+           20,0>>)).

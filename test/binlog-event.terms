@@ -650,3 +650,96 @@
    0,0,0,0,0,0,10,0,0,38,0,0,0,0,0,0,1,32,0,160,69,0,0,0,0,6,3,115,116,
    100,4,8,0,8,0,255,0,9,1,0,0,0,0,0,0,0,18,255,0,115,104,111,114,116,
    105,115,104,108,121,0,66,69,71,73,78,128,168,33,208>>}.
+
+
+{#{packet => #{header => #{flags => 0,
+                           timestamp => 1697023821,
+                           server_id => 100,
+                           event_type => table_map,
+                           event_size => 143,
+                           log_pos => 3420465},
+               action => log_event,
+               event => #{flags => 1,
+                          table => <<"grades">>,
+                          metadata => #{unsignedness => #{4 => false,
+                                                          5 => false,
+                                                          6 => false,
+                                                          7 => false,
+                                                          8 => false},
+                                        simple_primary_key => [2],
+                                        default_charset => "ÿ",
+                                        column_name => [<<"last">>,
+                                                        <<"first">>,
+                                                        <<"ssn">>,
+                                                        <<"test1">>,
+                                                        <<"test2">>,
+                                                        <<"test3">>,
+                                                        <<"test4">>,
+                                                        <<"final">>,
+                                                        <<"grade">>],
+                                        column_visibility => <<255,128>>},
+                          database => <<"shortishly">>,
+                          table_id => 119,
+                          null_bitmap => <<251,1>>,
+                          field_metadata => #{1 => 2,
+                                              2 => 2,
+                                              3 => 200,
+                                              4 => 4,
+                                              5 => 4,
+                                              6 => 4,
+                                              7 => 4,
+                                              8 => 4,
+                                              9 => 20},
+                           coltypes => [blob,
+                                        blob,
+                                        varchar,
+                                        float,
+                                        float,
+                                        float,
+                                        float,
+                                        float,
+                                        varchar]},
+               footer => <<"\vï{ÿ">>},
+   sequence => 87},
+ <<144,0,0,
+   87,
+   0,
+   77,135,38,101,
+   19,              % event type
+   100,0,0,0,       % server id
+   143,0,0,0,       % event size
+   49,49,52,0,      % log position
+   0,0,             % flags
+   119,0,0,0,0,0,   % table id
+   1,0,             % flags
+   %%                 shortishly
+   10,115,104,111,114,116,105,115,104,108,121,
+   0,               % filler
+   %%                 grades
+   6,103,114,97,100,101,115,
+   0,               % filler
+   9,               % number of column types
+   252,             % blob
+   252,             % blob
+   15,              % varchar
+   4,               % float
+   4,               % float
+   4,               % float
+   4,               % float
+   4,               % float
+   15,              % varchar
+   11,
+   2,
+   2,
+   200,0,
+   4,
+   4,
+   4,
+   4,
+   4,
+   20,0,
+   251,1,1,1,0,2,3,252,255,0,4,51,4,108,97,
+   115,116,5,102,105,114,115,116,3,115,115,110,5,116,101,115,116,
+   49,5,116,101,115,116,50,5,116,101,115,116,51,5,116,101,115,116,
+   52,5,102,105,110,97,108,5,103,114,97,100,101,8,1,2,12,2,255,128,
+   11,239,123,255>>}.

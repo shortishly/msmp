@@ -18,6 +18,7 @@
 -feature(maybe_expr, enable).
 
 -export([decode/1]).
+-export([encode/1]).
 
 
 decode(#{type := Type})
@@ -54,4 +55,34 @@ decoder(Decoder) ->
 
         (Encoded) ->
             {<<>>, Decoder(Encoded)}
+    end.
+
+
+encode(#{type := Type})
+  when Type == long;
+       Type == longlong;
+       Type == short;
+       Type == year;
+       Type == tiny ->
+    fun erlang:integer_to_binary/1;
+
+encode(#{type := Type})
+  when Type == float;
+       Type == double;
+       Type == decimal;
+       Type == newdecimal ->
+    fun
+        (Decoded) ->
+            float_to_binary(Decoded, [short])
+    end;
+
+encode(#{type := Type})
+  when Type == string;
+       Type == var_string;
+       Type == varchar;
+       Type == long_blob;
+       Type == blob ->
+    fun
+        (Encoded) ->
+            Encoded
     end.
