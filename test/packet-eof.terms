@@ -33,3 +33,27 @@
                warnings => 0},
    sequence => 5},
  <<16#05, 16#00, 16#00, 16#05, 16#fe, 16#00, 16#00, 16#02, 16#00>>}.
+
+
+{#{packet => #{action => eof,
+               status_flags => #{session_state_changed => false,
+                                 reserved0 => false,
+                                 status_in_trans => false,
+                                 status_autocommit => true,
+                                 more_results_exists => false,
+                                 query_no_good_index_used => false,
+                                 query_no_index_used => false,
+                                 status_cursor_exists => false,
+                                 status_last_row_sent => false,
+                                 status_db_dropped => false,
+                                 status_no_backslash_escapes => false,
+                                 status_metadata_changed => false,
+                                 query_was_slow => false,
+                                 ps_out_params => true,
+                                 status_in_trans_readonly => false,
+                                 reserved1 => false},
+               warnings => 0},
+   sequence => 5},
+ <<5,0,0,
+   5,
+   254,0,0,2,8>>}.
