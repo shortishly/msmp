@@ -47,6 +47,16 @@ dep_narcs = $(if $(DEP_LN),ln ../../narcs,git https://github.com/shortishly/narc
 dep_phrase = $(if $(DEP_LN),ln ../../phrase,git https://github.com/shortishly/phrase.git)
 dep_scran = $(if $(DEP_LN),ln ../../scran,git https://github.com/shortishly/scran.git)
 
+define HEX_TARBALL_EXTRA_METADATA
+#{
+	licenses => [<<"Apache-2">>],
+	links => #{
+		<<"Function reference">> => <<"https://shortishly.github.io/msmp/edoc/">>,
+		<<"Test Coverage">> => <<"https://shortishly.github.io/msmp/cover/">>,
+		<<"GitHub">> => <<"https://github.com/shortishly/msmp">>
+	}
+}
+endef
 
 include $(if $(ERLANG_MK_FILENAME),$(ERLANG_MK_FILENAME),erlang.mk)
 
