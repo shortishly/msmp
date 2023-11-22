@@ -48,7 +48,7 @@ dep_phrase = $(if $(DEP_LN),ln ../../phrase,git https://github.com/shortishly/ph
 dep_scran = $(if $(DEP_LN),ln ../../scran,git https://github.com/shortishly/scran.git)
 
 dep_narcs_commit = 0.1.0
-dep_phrase_commit = 0.1.0
+dep_phrase_commit = 0.2.1
 dep_scran_commit = 0.2.0
 
 define HEX_TARBALL_EXTRA_METADATA
